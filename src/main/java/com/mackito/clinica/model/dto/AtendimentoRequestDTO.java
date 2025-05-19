@@ -2,24 +2,26 @@ package com.mackito.clinica.model.dto;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
 public class AtendimentoRequestDTO {
 
-    @NotNull(message = "O ID do paciente é obrigatório.")
+    @NotNull(message = "O ID do paciente é obrigatório")
     private Long idPaciente;
 
-    @NotNull(message = "O ID do médico é obrigatório.")
+    @NotNull(message = "O ID do médico é obrigatório")
     private Long idMedico;
 
-    @NotNull(message = "A data do atendimento é obrigatória.")
-    @Future(message = "A data do atendimento deve ser no futuro.")
+    @NotNull(message = "A data do atendimento é obrigatória")
+    @Future(message = "A data do atendimento deve ser futura")
     private LocalDate dataAtendimento;
 
-    private String sala; // Opcional
+    @NotNull(message = "A sala é obrigatória")
+    @Size(min = 1, max = 50, message = "A sala deve ter entre 1 e 50 caracteres")
+    private String sala;
 
-    // Getters e setters
     public Long getIdPaciente() {
         return idPaciente;
     }
