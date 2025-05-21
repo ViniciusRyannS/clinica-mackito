@@ -11,13 +11,17 @@ public class Atendimento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY) // Opcional: melhora a performance
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_paciente", nullable = false)
     private Paciente paciente;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_medico", nullable = false)
     private Medico medico;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario", nullable = false)
+    private Usuario usuario;
 
     @Column(name = "data_atendimento", nullable = false)
     private LocalDate dataAtendimento;
@@ -26,9 +30,10 @@ public class Atendimento {
 
     public Atendimento() {}
 
-    public Atendimento(Paciente paciente, Medico medico, LocalDate dataAtendimento, String sala) {
+    public Atendimento(Paciente paciente, Medico medico, Usuario usuario, LocalDate dataAtendimento, String sala) {
         this.paciente = paciente;
         this.medico = medico;
+        this.usuario = usuario;
         this.dataAtendimento = dataAtendimento;
         this.sala = sala;
     }
@@ -51,6 +56,14 @@ public class Atendimento {
 
     public void setMedico(Medico medico) {
         this.medico = medico;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public LocalDate getDataAtendimento() {

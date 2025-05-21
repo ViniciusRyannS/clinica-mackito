@@ -6,19 +6,25 @@ public class AtendimentoDTO {
 
     private Long id;
     private Long idPaciente;
+    private String nomePaciente;
     private Long idMedico;
+    private String nomeMedico;
     private LocalDate dataAtendimento;
     private String sala;
 
-    public AtendimentoDTO(Long id, Long idPaciente, Long idMedico, LocalDate dataAtendimento, String sala) {
+    public AtendimentoDTO(Long id, Long idPaciente, String nomePaciente, Long idMedico, String nomeMedico, LocalDate dataAtendimento, String sala) {
         this.id = id;
         this.idPaciente = idPaciente;
+        this.nomePaciente = nomePaciente;
         this.idMedico = idMedico;
+        this.nomeMedico = nomeMedico;
         this.dataAtendimento = dataAtendimento;
         this.sala = sala;
     }
 
-    // Getters e Setters
+    
+
+    // Getters
     public Long getId() {
         return id;
     }
@@ -27,8 +33,16 @@ public class AtendimentoDTO {
         return idPaciente;
     }
 
+    public String getNomePaciente() {
+        return nomePaciente;
+    }
+
     public Long getIdMedico() {
         return idMedico;
+    }
+
+    public String getNomeMedico() {
+        return nomeMedico;
     }
 
     public LocalDate getDataAtendimento() {
@@ -39,6 +53,7 @@ public class AtendimentoDTO {
         return sala;
     }
 
+    // Setters
     public void setId(Long id) {
         this.id = id;
     }
@@ -47,8 +62,16 @@ public class AtendimentoDTO {
         this.idPaciente = idPaciente;
     }
 
+    public void setNomePaciente(String nomePaciente) {
+        this.nomePaciente = nomePaciente;
+    }
+
     public void setIdMedico(Long idMedico) {
         this.idMedico = idMedico;
+    }
+
+    public void setNomeMedico(String nomeMedico) {
+        this.nomeMedico = nomeMedico;
     }
 
     public void setDataAtendimento(LocalDate dataAtendimento) {

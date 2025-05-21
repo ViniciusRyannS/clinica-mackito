@@ -15,7 +15,10 @@ public class Usuario implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String senha;
 
     public Usuario() {}
@@ -37,9 +40,18 @@ public class Usuario implements UserDetails {
         return senha;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    // Métodos do UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList(); // ou roles se você tiver
+        return Collections.emptyList(); // ou sua lógica de roles
     }
 
     @Override

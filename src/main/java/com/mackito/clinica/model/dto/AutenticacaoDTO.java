@@ -19,4 +19,15 @@ public class AutenticacaoDTO {
     public void setSenha(String senha) {
         this.senha = senha;
     }
+
+    public AutenticacaoDTO() {}
+
+    public AutenticacaoDTO(String email, String senha) {
+        this.email = email;
+        this.senha = senha;
+    }
+
+
 }
+
+
