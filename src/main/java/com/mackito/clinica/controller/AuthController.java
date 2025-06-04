@@ -38,21 +38,26 @@ private PasswordEncoder passwordEncoder;
 
 
 
-    @PostMapping("/login")
-    public ResponseEntity<TokenDTO> autenticar(@RequestBody @Valid AutenticacaoDTO dados) {
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                dados.getEmail(), dados.getSenha()
-        );
+   @PostMapping("/login")
+public ResponseEntity<?> autenticar(@RequestBody @Valid AutenticacaoDTO dados) {
+    var usuarioOptional = usuarioRepository.findByEmail(dados.getEmail());
 
-        
-
-        Authentication authentication = authenticationManager.authenticate(token);
-
-        Usuario usuario = (Usuario) authentication.getPrincipal();
-        String jwt = tokenService.gerarToken(usuario);
-
-        return ResponseEntity.ok(new TokenDTO(jwt));
+    if (usuarioOptional.isEmpty()) {
+        return ResponseEntity.status(403).body("Usuário não encontrado");
     }
+
+    Usuario usuario = usuarioOptional.get();
+
+    if (!passwordEncoder.matches(dados.getSenha(), usuario.getSenha())) {
+        return ResponseEntity.status(403).body("Senha inválida");
+    }
+
+    var tokenAutenticacao = new UsernamePasswordAuthenticationToken(dados.getEmail(), dados.getSenha());
+    Authentication authentication = authenticationManager.authenticate(tokenAutenticacao);
+
+    String jwt = tokenService.gerarToken(usuario);
+    return ResponseEntity.ok(new TokenDTO(jwt));
+}
     
     
 

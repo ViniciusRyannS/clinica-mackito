@@ -3,6 +3,7 @@ package com.mackito.clinica.config;
 import com.mackito.clinica.security.SecurityFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,19 +21,20 @@ public class SecurityConfig {
     private SecurityFilter securityFilter;
 
     
-   @Bean
+ @Bean
 public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    return http
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-    .requestMatchers("/auth/**").permitAll()
-    .requestMatchers("/pacientes", "/pacientes/**").permitAll()
+    return http.csrf(csrf -> csrf.disable())
+        .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(auth -> auth
+    .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/cadastrar", "/pacientes").permitAll()
     .anyRequest().authenticated()
 )
-            .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-            .build();
+
+        .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+        .build();
 }
+
+
 
 
     @Bean

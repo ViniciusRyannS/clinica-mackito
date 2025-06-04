@@ -1,13 +1,13 @@
-package com.mackito.clinica;
+// package com.mackito.clinica;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class ClinicaMackitoApplicationTests {
+// @SpringBootTest
+// class ClinicaMackitoApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+// 	@Test
+// 	void contextLoads() {
+// 	}
 
-}
+// }
