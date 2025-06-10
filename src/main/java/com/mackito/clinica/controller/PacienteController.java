@@ -1,6 +1,7 @@
 package com.mackito.clinica.controller;
 
 import com.mackito.clinica.model.Paciente;
+import com.mackito.clinica.model.dto.PacienteDTO;
 import com.mackito.clinica.service.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,13 @@ public class PacienteController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Paciente> buscarPorId(@PathVariable Long id) {
-        return pacienteService.buscarPorId(id);
-    }
+public ResponseEntity<PacienteDTO> buscarPorId(@PathVariable Long id) {
+    return pacienteService.buscarPorId(id)
+        .map(p -> new PacienteDTO(p.getId(), p.getNome(), p.getCpf(), p.getEmail(), p.getTelefone()))
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
+}
+
 
     @PostMapping
     public Paciente criarPaciente(@RequestBody @Valid Paciente paciente) {

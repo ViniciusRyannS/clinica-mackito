@@ -26,7 +26,9 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
     return http.csrf(csrf -> csrf.disable())
         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
-    .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/cadastrar", "/pacientes").permitAll()
+    .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/cadastrar", "/pacientes", "/atendimentos").permitAll()
+    .requestMatchers(HttpMethod.GET, "/medicos", "/pacientes", "/atendimentos").permitAll()
+
     .anyRequest().authenticated()
 )
 

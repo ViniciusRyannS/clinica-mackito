@@ -1,6 +1,7 @@
 package com.mackito.clinica.controller;
 
 import com.mackito.clinica.model.Medico;
+import com.mackito.clinica.model.dto.MedicoDTO;
 import com.mackito.clinica.service.MedicoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,13 @@ public class MedicoController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Medico> buscarPorId(@PathVariable Long id) {
-        return medicoService.buscarPorId(id);
-    }
+public ResponseEntity<MedicoDTO> buscarPorId(@PathVariable Long id) {
+    return medicoService.buscarPorId(id)
+        .map(m -> new MedicoDTO(m))
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
+}
+
 
     @PostMapping
     public Medico criarMedico(@RequestBody @Valid Medico medico) {
@@ -42,4 +47,6 @@ public class MedicoController {
     public void deletarMedico(@PathVariable Long id) {
         medicoService.deletar(id);
     }
+
+    
 }

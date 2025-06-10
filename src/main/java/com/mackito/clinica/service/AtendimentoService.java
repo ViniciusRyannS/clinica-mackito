@@ -34,55 +34,78 @@ public class AtendimentoService {
     private PacienteRepository pacienteRepository;
 
     public AtendimentoDTO salvar(AtendimentoRequestDTO dto) {
-    Optional<Medico> medicoOpt = medicoRepository.findById(dto.getIdMedico());
-    Optional<Paciente> pacienteOpt = pacienteRepository.findById(dto.getIdPaciente());
-    Optional<Usuario> usuarioOpt = usuarioRepository.findById(dto.getIdUsuario());
+        Optional<Medico> medicoOpt = medicoRepository.findById(dto.getIdMedico());
+        Optional<Paciente> pacienteOpt = pacienteRepository.findById(dto.getIdPaciente());
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(dto.getIdUsuario());
 
-    if (medicoOpt.isEmpty() || pacienteOpt.isEmpty() || usuarioOpt.isEmpty()) {
-        throw new RuntimeException("Médico, Paciente ou Usuário não encontrado");
+        if (medicoOpt.isEmpty() || pacienteOpt.isEmpty() || usuarioOpt.isEmpty()) {
+            throw new RuntimeException("Médico, Paciente ou Usuário não encontrado");
+        }
+
+        Atendimento atendimento = new Atendimento();
+        atendimento.setMedico(medicoOpt.get());
+        atendimento.setPaciente(pacienteOpt.get());
+        atendimento.setUsuario(usuarioOpt.get());
+        atendimento.setDataAtendimento(dto.getDataAtendimento());
+        atendimento.setSala(dto.getSala());
+
+        Atendimento salvo = atendimentoRepository.save(atendimento);
+
+        return new AtendimentoDTO(
+            salvo.getId(),
+            salvo.getPaciente().getId(),
+            salvo.getPaciente().getNome(),
+            salvo.getMedico().getId(),
+            salvo.getMedico().getNome(),
+            salvo.getDataAtendimento(),
+            salvo.getSala()
+        );
     }
-
-    Atendimento atendimento = new Atendimento();
-    atendimento.setMedico(medicoOpt.get());
-    atendimento.setPaciente(pacienteOpt.get());
-    atendimento.setUsuario(usuarioOpt.get());
-    atendimento.setDataAtendimento(dto.getDataAtendimento());
-    atendimento.setSala(dto.getSala());
-
-    Atendimento salvo = atendimentoRepository.save(atendimento);
-
-    return new AtendimentoDTO(
-    salvo.getId(),
-    salvo.getPaciente().getId(),
-    salvo.getPaciente().getNome(),
-    salvo.getMedico().getId(),
-    salvo.getMedico().getNome(),
-    salvo.getDataAtendimento(),
-    salvo.getSala()
-);
-    }
-
-    
 
     public List<AtendimentoDTO> listarTodos() {
-    return atendimentoRepository.findAll().stream().map(a ->
+        return atendimentoRepository.findAll().stream().map(a ->
             new AtendimentoDTO(
-                    a.getId(),
-                    a.getPaciente().getId(),
-                    a.getPaciente().getNome(),
-                    a.getMedico().getId(),
-                    a.getMedico().getNome(),
-                    a.getDataAtendimento(),
-                    a.getSala()
+                a.getId(),
+                a.getPaciente().getId(),
+                a.getPaciente().getNome(),
+                a.getMedico().getId(),
+                a.getMedico().getNome(),
+                a.getDataAtendimento(),
+                a.getSala()
             )).collect(Collectors.toList());
-}
-
-
+    }
 
     public void cancelarAtendimento(Long id) {
         atendimentoRepository.deleteById(id);
     }
+
+    // MÉTODO: listar atendimentos por paciente
+    public List<AtendimentoDTO> listarPorPaciente(Long idPaciente) {
+        return atendimentoRepository.findByPacienteId(idPaciente)
+            .stream()
+            .map(a -> new AtendimentoDTO(
+                a.getId(),
+                a.getPaciente().getId(),
+                a.getPaciente().getNome(),
+                a.getMedico().getId(),
+                a.getMedico().getNome(),
+                a.getDataAtendimento(),
+                a.getSala()
+            )).collect(Collectors.toList());
+    }
+
+    public List<AtendimentoDTO> listarPorMedico(Long idMedico) {
+    return atendimentoRepository.findByMedicoId(idMedico)
+        .stream()
+        .map(a -> new AtendimentoDTO(
+            a.getId(),
+            a.getPaciente().getId(),
+            a.getPaciente().getNome(),
+            a.getMedico().getId(),
+            a.getMedico().getNome(),
+            a.getDataAtendimento(),
+            a.getSala()
+        )).collect(Collectors.toList());
 }
 
-    
-
+}
