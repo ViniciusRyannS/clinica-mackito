@@ -7,4 +7,5 @@ import java.util.List;
 public interface AtendimentoRepository extends JpaRepository<Atendimento, Long> {
     List<Atendimento> findByPacienteId(Long id);
     List<Atendimento> findByMedicoId(Long id);
+    
 }
