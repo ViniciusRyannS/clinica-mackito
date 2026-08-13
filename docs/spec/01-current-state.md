@@ -288,3 +288,11 @@ Também foi adicionada uma coleção Postman inicial, com fluxos públicos, admi
 O SQL acadêmico recuperado posteriormente confirmou incompatibilidade com o schema modernizado: nomes de tabelas/colunas divergentes e inserts com senha em texto puro. O database acadêmico deve ser preservado; a demo modernizada deve usar database novo.
 
 Foi implementado bootstrap opt-in da primeira conta `ADMIN`, sem credencial padrão, além de `POST /usuarios` exclusivo de administrador para criar `RECEPCAO`, `ADMIN` adicional e `MEDICO` vinculado. A suíte passou a 22 testes.
+
+Na sequência, foi concluído o ownership de dados pessoais:
+
+- pacientes completam e consultam o próprio perfil em `/me/paciente`, sem poder escolher outro e-mail;
+- médicos consultam o cadastro previamente vinculado em `/me/medico`;
+- pacientes e médicos consultam somente os próprios atendimentos em `/me/atendimentos`;
+- endpoints administrativos completos permanecem restritos a `ADMIN` e `RECEPCAO`;
+- cinco testes de integração cobrem vínculo, duplicidade, separação de dados e autorização por perfil.

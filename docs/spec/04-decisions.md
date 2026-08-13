@@ -100,7 +100,7 @@ Não é necessário criar uma ADR para cada mudança pequena. Registre apenas de
 | Recurso | ADMIN | RECEPCAO | MEDICO | PACIENTE |
 |---|---|---|---|---|
 | Pacientes, médicos e atendimentos administrativos | permitido | permitido | negado | negado |
-| Dados/agenda próprios | futuro endpoint com ownership | n/a | planejado | planejado |
+| Dados/agenda próprios | n/a | n/a | somente médico vinculado | somente paciente vinculado |
 | Cadastro público | n/a | n/a | n/a | cria conta PACIENTE |
 
 **Motivo:** Evita escalação de privilégio e exposição cruzada enquanto os endpoints de ownership ainda não existem. É preferível negar temporariamente a médicos/pacientes do que liberar coleções completas.
@@ -116,6 +116,34 @@ Não é necessário criar uma ADR para cada mudança pequena. Registre apenas de
 - `src/main/java/com/mackito/clinica/model/Usuario.java`
 - `src/main/java/com/mackito/clinica/config/SecurityConfig.java`
 - `src/main/java/com/mackito/clinica/service/AtendimentoService.java`
+
+---
+
+## ADR-006 — Ownership dos perfis clínicos e atendimentos
+
+**Status:** Aceita
+
+**Contexto:** Médicos e pacientes não podem receber acesso às coleções administrativas completas. A identidade do recurso deve vir da conta autenticada, sem aceitar IDs de usuário ou de perfil clínico escolhidos pelo cliente.
+
+**Opções consideradas:**
+1. liberar filtros por `idPaciente`/`idMedico` nos endpoints existentes;
+2. confiar no ID enviado pelo front-end e validar pontualmente;
+3. criar rotas `/me` e derivar paciente/médico exclusivamente do usuário autenticado.
+
+**Decisão:** As rotas `/me/paciente`, `/me/medico` e `/me/atendimentos` usam o vínculo persistido em `Usuario`. No primeiro preenchimento do paciente, o e-mail clínico é derivado da conta autenticada; o request aceita somente nome, CPF e telefone. O vínculo médico continua sendo criado exclusivamente pelo administrador.
+
+**Motivo:** Remove a possibilidade de consultar ou vincular dados de outra pessoa pela troca de IDs e separa claramente operações pessoais das administrativas.
+
+**Consequências:**
+- uma conta de paciente só pode criar um perfil clínico;
+- pacientes e médicos sem vínculo recebem `404` nas rotas próprias;
+- autoagendamento não faz parte desta decisão e depende de regras de disponibilidade e conflito;
+- alteração de e-mail e recuperação de vínculo exigirão fluxos próprios posteriores.
+
+**Evidências/arquivos relacionados:**
+- `src/main/java/com/mackito/clinica/controller/MeuPerfilController.java`
+- `src/main/java/com/mackito/clinica/service/MeuPerfilService.java`
+- `src/test/java/com/mackito/clinica/security/MeuPerfilIntegrationTest.java`
 
 ---
 

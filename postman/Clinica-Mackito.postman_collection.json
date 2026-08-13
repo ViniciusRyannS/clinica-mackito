@@ -134,7 +134,36 @@
       ]
     },
     {
-      "name": "05 - Exemplos de erro",
+      "name": "05 - Meus dados (PACIENTE/MEDICO)",
+      "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+      "item": [
+        {
+          "name": "Completar meu perfil de paciente",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nome\": \"Paciente Exemplo\",\n  \"cpf\": \"{{pacienteCpf}}\",\n  \"telefone\": \"11999999999\"\n}" },
+            "url": "{{baseUrl}}/me/paciente",
+            "description": "O e-mail não é aceito no body: a API usa o e-mail da conta autenticada."
+          }
+        },
+        {
+          "name": "Consultar meu perfil de paciente",
+          "request": { "method": "GET", "url": "{{baseUrl}}/me/paciente" }
+        },
+        {
+          "name": "Consultar meu perfil de médico",
+          "request": { "method": "GET", "url": "{{baseUrl}}/me/medico" }
+        },
+        {
+          "name": "Listar meus atendimentos",
+          "request": { "method": "GET", "url": "{{baseUrl}}/me/atendimentos" },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Retorna somente dados próprios', () => pm.response.to.have.status(200));"] } }]
+        }
+      ]
+    },
+    {
+      "name": "06 - Exemplos de erro",
       "item": [
         {
           "name": "Cadastro inválido - 400",

@@ -56,6 +56,8 @@ Os testes usam o profile `test` e um banco H2 em memória. Portanto, não exigem
 - bloqueio anônimo das listagens de pacientes e atendimentos.
 - validação HTTP de usuários, pacientes e atendimentos;
 - resposta `404` uniforme para recurso inexistente.
+- autorização por perfil e isolamento dos atendimentos próprios de pacientes e médicos;
+- vínculo seguro do perfil clínico do paciente com a conta autenticada.
 
 O Postman é indicado para explorar e demonstrar a API manualmente, mas não substitui os testes automatizados: a suíte Maven é repetível e detecta regressões sem depender de cliques ou de uma coleção local.
 
@@ -84,7 +86,12 @@ Recursos inexistentes retornam `404 Not Found` no mesmo formato, sem o objeto `c
 
 A aplicação possui quatro perfis: `ADMIN`, `RECEPCAO`, `MEDICO` e `PACIENTE`.
 
-Nesta etapa, `ADMIN` e `RECEPCAO` podem acessar os endpoints administrativos de pacientes, médicos e atendimentos. `MEDICO` e `PACIENTE` ficam bloqueados nesses endpoints gerais até existirem rotas que garantam acesso somente aos próprios dados.
+`ADMIN` e `RECEPCAO` acessam os endpoints administrativos de pacientes, médicos e atendimentos. `MEDICO` e `PACIENTE` continuam bloqueados nessas coleções gerais e usam rotas com ownership:
+
+- `POST /me/paciente`: o paciente completa o próprio perfil; o e-mail vem da conta autenticada;
+- `GET /me/paciente`: o paciente consulta o próprio perfil;
+- `GET /me/medico`: o médico consulta o cadastro vinculado pelo administrador;
+- `GET /me/atendimentos`: médico ou paciente consulta somente os próprios atendimentos.
 
 O cadastro público em `POST /auth/cadastrar` sempre cria uma conta `PACIENTE`; qualquer campo `perfil` enviado pelo cliente é ignorado. A resposta contém somente `id`, `email` e `perfil`, nunca senha ou hash.
 
