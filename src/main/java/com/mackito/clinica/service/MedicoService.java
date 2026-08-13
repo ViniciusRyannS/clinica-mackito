@@ -1,6 +1,7 @@
 package com.mackito.clinica.service;
 
 import com.mackito.clinica.exception.RecursoNaoEncontradoException;
+import com.mackito.clinica.exception.ConflitoDadosException;
 import com.mackito.clinica.model.Medico;
 import com.mackito.clinica.repository.MedicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +25,18 @@ public class MedicoService {
     }
 
     public Medico salvar(Medico medico) {
+        if (repository.existsByCrm(medico.getCrm())) {
+            throw new ConflitoDadosException("Já existe um médico cadastrado com este CRM");
+        }
         return repository.save(medico);
     }
 
     public Medico atualizarMedico(Long id, Medico novoMedico) {
         Medico medico = repository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Médico não encontrado com o ID: " + id));
+        if (repository.existsByCrmAndIdNot(novoMedico.getCrm(), id)) {
+            throw new ConflitoDadosException("Já existe um médico cadastrado com este CRM");
+        }
         medico.setNome(novoMedico.getNome());
         medico.setCrm(novoMedico.getCrm());
         medico.setEspecialidade(novoMedico.getEspecialidade());

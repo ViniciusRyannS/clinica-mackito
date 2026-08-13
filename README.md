@@ -23,7 +23,7 @@ $env:JWT_SECRET = '<segredo-aleatorio-com-pelo-menos-32-caracteres>'
 
 Não copie valores reais para arquivos versionados. O usuário MySQL deve ter acesso somente ao database da aplicação e não deve ser `root`.
 
-O database precisa existir antes da primeira inicialização:
+O database vazio precisa existir antes da primeira inicialização:
 
 ```sql
 CREATE DATABASE clinica_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -35,7 +35,9 @@ CREATE DATABASE clinica_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 .\mvnw.cmd spring-boot:run
 ```
 
-A API usa a porta `8080` por padrão. O Hibernate ainda atualiza o schema com `ddl-auto=update`; migrations versionadas permanecem como melhoria planejada.
+A API usa a porta `8080` por padrão. O Flyway executa as migrations de `src/main/resources/db/migration`, e o Hibernate usa `ddl-auto=validate` para conferir o mapeamento sem alterar o schema.
+
+Esta migration inicial foi criada para um database novo. Se existir um schema acadêmico antigo, faça backup e não aponte a aplicação modernizada diretamente para ele: a estratégia de migração dos dados deverá ser avaliada separadamente.
 
 ## Testes
 
@@ -83,3 +85,14 @@ Nesta etapa, `ADMIN` e `RECEPCAO` podem acessar os endpoints administrativos de 
 O cadastro público em `POST /auth/cadastrar` sempre cria uma conta `PACIENTE`; qualquer campo `perfil` enviado pelo cliente é ignorado. A resposta contém somente `id`, `email` e `perfil`, nunca senha ou hash.
 
 Ao criar um atendimento, o usuário responsável é obtido da autenticação corrente. O cliente não envia mais `idUsuario`.
+
+## Unicidade
+
+O banco e a aplicação impedem duplicidade de:
+
+- e-mail de conta;
+- CPF de paciente;
+- e-mail de paciente;
+- CRM de médico.
+
+Conflitos conhecidos retornam `409 Conflict` com mensagem segura. As constraints do banco permanecem como proteção definitiva contra requisições concorrentes.

@@ -26,6 +26,7 @@ public class Atendimento {
     @Column(name = "data_atendimento", nullable = false)
     private LocalDate dataAtendimento;
 
+    @Column(nullable = false, length = 50)
     private String sala;
 
     public Atendimento() {}

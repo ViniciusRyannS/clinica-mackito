@@ -1,6 +1,7 @@
 package com.mackito.clinica.service;
 
 import com.mackito.clinica.exception.RecursoNaoEncontradoException;
+import com.mackito.clinica.exception.ConflitoDadosException;
 import com.mackito.clinica.model.Paciente;
 import com.mackito.clinica.repository.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ public class PacienteService {
     }
 
     public Paciente salvar(Paciente paciente) {
+        validarUnicidadeAoCriar(paciente);
         return pacienteRepository.save(paciente);
     }
 
@@ -38,6 +40,13 @@ public class PacienteService {
     Paciente pacienteExistente = pacienteRepository.findById(id)
         .orElseThrow(() -> new RecursoNaoEncontradoException("Paciente não encontrado com o ID: " + id));
 
+    if (pacienteRepository.existsByCpfAndIdNot(pacienteAtualizado.getCpf(), id)) {
+        throw new ConflitoDadosException("Já existe um paciente cadastrado com este CPF");
+    }
+    if (pacienteRepository.existsByEmailAndIdNot(pacienteAtualizado.getEmail(), id)) {
+        throw new ConflitoDadosException("Já existe um paciente cadastrado com este e-mail");
+    }
+
     pacienteExistente.setNome(pacienteAtualizado.getNome());
     pacienteExistente.setCpf(pacienteAtualizado.getCpf());
     pacienteExistente.setEmail(pacienteAtualizado.getEmail());
@@ -45,5 +54,14 @@ public class PacienteService {
 
     return pacienteRepository.save(pacienteExistente);
 }
+
+    private void validarUnicidadeAoCriar(Paciente paciente) {
+        if (pacienteRepository.existsByCpf(paciente.getCpf())) {
+            throw new ConflitoDadosException("Já existe um paciente cadastrado com este CPF");
+        }
+        if (pacienteRepository.existsByEmail(paciente.getEmail())) {
+            throw new ConflitoDadosException("Já existe um paciente cadastrado com este e-mail");
+        }
+    }
 
 }

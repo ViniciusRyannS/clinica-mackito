@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -20,6 +21,7 @@ public class Medico {
 
     @NotBlank(message = "O CRM é obrigatório")
     @Size(min = 5, max = 20, message = "O CRM deve ter entre 5 e 20 caracteres")
+    @Column(nullable = false, unique = true, length = 20)
     private String crm;
 
     @NotBlank(message = "A especialidade é obrigatória")

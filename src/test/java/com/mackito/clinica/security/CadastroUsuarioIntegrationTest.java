@@ -54,4 +54,27 @@ class CadastroUsuarioIntegrationTest {
                 .andExpect(jsonPath("$.senha").doesNotExist())
                 .andExpect(jsonPath("$.password").doesNotExist());
     }
+
+    @Test
+    void deveRetornarConflitoAoRepetirEmailDeConta() throws Exception {
+        String body = """
+                {
+                  "email": "duplicado@example.com",
+                  "senha": "senha-segura-123"
+                }
+                """;
+
+        mockMvc.perform(post("/auth/cadastrar")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/auth/cadastrar")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.mensagem")
+                        .value("Já existe uma conta cadastrada com este e-mail"));
+    }
 }

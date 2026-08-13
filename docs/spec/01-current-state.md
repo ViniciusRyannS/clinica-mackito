@@ -274,3 +274,11 @@ Em 2026-08-13 foi iniciado o ciclo de perfis e identidade:
 - a suíte passou a 15 testes, incluindo matriz inicial de autorização e proteção contra escalação no cadastro público.
 
 Endpoints de dados próprios para médico/paciente, criação administrativa de contas internas e migrations permanecem como próximos passos.
+
+Ainda em 2026-08-13, o schema MySQL passou a ser versionado pelo Flyway:
+
+- `V1__criar_schema_inicial.sql` cria as quatro tabelas, FKs, perfis e vínculos;
+- o runtime passou a `ddl-auto=validate`;
+- e-mail de conta, CPF/e-mail de paciente e CRM receberam constraints únicas;
+- conflitos conhecidos retornam 409 antes da persistência, mantendo a constraint como garantia concorrente;
+- a suíte passou a 16 testes com o cenário de e-mail de conta duplicado.

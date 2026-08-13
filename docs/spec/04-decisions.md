@@ -119,6 +119,34 @@ Não é necessário criar uma ADR para cada mudança pequena. Registre apenas de
 
 ---
 
+## ADR-004 — Flyway como fonte do schema MySQL
+
+**Status:** Aceita
+
+**Contexto:** `ddl-auto=update` alterava o schema implicitamente e não deixava histórico. O database acadêmico original não foi preservado, portanto não há dados locais conhecidos a migrar.
+
+**Opções consideradas:**
+1. continuar com `ddl-auto=update`;
+2. manter um arquivo SQL manual sem controle de execução;
+3. usar Flyway com migrations versionadas e Hibernate em modo `validate`.
+
+**Decisão:** Flyway passa a criar e evoluir o MySQL a partir de `V1__criar_schema_inicial.sql`. O runtime usa `ddl-auto=validate`. O profile `test` mantém Flyway desligado e Hibernate `create-drop` sobre H2, até ser acrescentado um teste específico de migrations/MySQL.
+
+**Motivo:** A evolução do schema fica auditável, repetível e explicável sem adicionar infraestrutura complexa.
+
+**Consequências:**
+- a migration V1 pressupõe database vazio;
+- schema legado, se reaparecer, exigirá backup e estratégia própria, sem `baseline-on-migrate` automático;
+- CPF, e-mail de paciente, e-mail de conta e CRM são únicos no banco;
+- diferenças MySQL/H2 ainda exigem validação específica futura.
+
+**Evidências/arquivos relacionados:**
+- `pom.xml`
+- `src/main/resources/application.properties`
+- `src/main/resources/db/migration/V1__criar_schema_inicial.sql`
+
+---
+
 ## Modelo para próximas decisões
 
 ### ADR-XXX — Título

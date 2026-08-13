@@ -61,6 +61,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                         null));
     }
 
+    @ExceptionHandler(ConflitoDadosException.class)
+    public ResponseEntity<ApiError> tratarConflitoConhecido(
+            ConflitoDadosException ex,
+            HttpServletRequest request) {
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(criarErro(HttpStatus.CONFLICT, ex.getMessage(), request.getRequestURI(), null));
+    }
+
     private ApiError criarErro(
             HttpStatus status,
             String mensagem,

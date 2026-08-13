@@ -8,6 +8,7 @@ import com.mackito.clinica.model.dto.TokenDTO;
 import com.mackito.clinica.model.dto.UsuarioResponseDTO;
 import com.mackito.clinica.repository.UsuarioRepository;
 import com.mackito.clinica.service.TokenService;
+import com.mackito.clinica.exception.ConflitoDadosException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,9 @@ public class AuthController {
 
 @PostMapping("/cadastrar")
 public ResponseEntity<UsuarioResponseDTO> cadastrarUsuario(@RequestBody @Valid CadastroUsuarioDTO dados) {
+    if (usuarioRepository.existsByEmail(dados.getEmail())) {
+        throw new ConflitoDadosException("Já existe uma conta cadastrada com este e-mail");
+    }
     Usuario usuario = new Usuario(
             dados.getEmail(),
             passwordEncoder.encode(dados.getSenha()),
