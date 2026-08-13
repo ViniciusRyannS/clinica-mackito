@@ -1,13 +1,17 @@
 package com.mackito.clinica.controller;
 
 import com.mackito.clinica.model.Usuario;
+import com.mackito.clinica.model.PerfilUsuario;
 import com.mackito.clinica.model.dto.AutenticacaoDTO;
+import com.mackito.clinica.model.dto.CadastroUsuarioDTO;
 import com.mackito.clinica.model.dto.TokenDTO;
+import com.mackito.clinica.model.dto.UsuarioResponseDTO;
 import com.mackito.clinica.repository.UsuarioRepository;
 import com.mackito.clinica.service.TokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,10 +28,14 @@ public class AuthController {
     @Autowired
     private TokenService tokenService;
 
-    @PostMapping("/cadastrar")
-public ResponseEntity<Usuario> cadastrarUsuario(@RequestBody @Valid Usuario usuario) {
-    usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
-    return ResponseEntity.ok(usuarioRepository.save(usuario));
+@PostMapping("/cadastrar")
+public ResponseEntity<UsuarioResponseDTO> cadastrarUsuario(@RequestBody @Valid CadastroUsuarioDTO dados) {
+    Usuario usuario = new Usuario(
+            dados.getEmail(),
+            passwordEncoder.encode(dados.getSenha()),
+            PerfilUsuario.PACIENTE);
+    Usuario salvo = usuarioRepository.save(usuario);
+    return ResponseEntity.status(HttpStatus.CREATED).body(new UsuarioResponseDTO(salvo));
 }
 
 @Autowired

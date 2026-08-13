@@ -73,3 +73,13 @@ Entradas inválidas retornam `400 Bad Request` com um contrato previsível:
 ```
 
 Recursos inexistentes retornam `404 Not Found` no mesmo formato, sem o objeto `campos`. Violações de restrições persistidas retornam `409 Conflict` sem expor detalhes internos do banco.
+
+## Perfis e autorização
+
+A aplicação possui quatro perfis: `ADMIN`, `RECEPCAO`, `MEDICO` e `PACIENTE`.
+
+Nesta etapa, `ADMIN` e `RECEPCAO` podem acessar os endpoints administrativos de pacientes, médicos e atendimentos. `MEDICO` e `PACIENTE` ficam bloqueados nesses endpoints gerais até existirem rotas que garantam acesso somente aos próprios dados.
+
+O cadastro público em `POST /auth/cadastrar` sempre cria uma conta `PACIENTE`; qualquer campo `perfil` enviado pelo cliente é ignorado. A resposta contém somente `id`, `email` e `perfil`, nunca senha ou hash.
+
+Ao criar um atendimento, o usuário responsável é obtido da autenticação corrente. O cliente não envia mais `idUsuario`.

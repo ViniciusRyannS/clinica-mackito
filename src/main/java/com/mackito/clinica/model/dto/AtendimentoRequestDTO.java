@@ -15,9 +15,6 @@ public class AtendimentoRequestDTO {
     @NotNull(message = "O médico é obrigatório")
     @Positive(message = "O identificador do médico deve ser positivo")
     private Long idMedico;
-    @NotNull(message = "O usuário é obrigatório")
-    @Positive(message = "O identificador do usuário deve ser positivo")
-    private Long idUsuario;
     @NotNull(message = "A data do atendimento é obrigatória")
     @FutureOrPresent(message = "A data do atendimento não pode estar no passado")
     private LocalDate dataAtendimento;
@@ -39,14 +36,6 @@ public class AtendimentoRequestDTO {
 
     public void setIdMedico(Long idMedico) {
         this.idMedico = idMedico;
-    }
-
-    public Long getIdUsuario() {
-        return idUsuario;
-    }
-
-    public void setIdUsuario(Long idUsuario) {
-        this.idUsuario = idUsuario;
     }
 
     public LocalDate getDataAtendimento() {

@@ -14,6 +14,7 @@ import com.mackito.clinica.repository.UsuarioRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,9 +41,10 @@ public class AtendimentoService {
         Paciente paciente = pacienteRepository.findById(dto.getIdPaciente())
                 .orElseThrow(() -> new RecursoNaoEncontradoException(
                         "Paciente não encontrado com o ID: " + dto.getIdPaciente()));
-        Usuario usuario = usuarioRepository.findById(dto.getIdUsuario())
+        String emailUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuario = usuarioRepository.findByEmail(emailUsuario)
                 .orElseThrow(() -> new RecursoNaoEncontradoException(
-                        "Usuário não encontrado com o ID: " + dto.getIdUsuario()));
+                        "Usuário autenticado não encontrado"));
 
         Atendimento atendimento = new Atendimento();
         atendimento.setMedico(medico);

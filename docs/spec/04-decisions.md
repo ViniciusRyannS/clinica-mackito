@@ -82,6 +82,43 @@ Não é necessário criar uma ADR para cada mudança pequena. Registre apenas de
 
 ---
 
+## ADR-003 — Perfis, cadastro público e identidade do atendimento
+
+**Status:** Aceita
+
+**Contexto:** A versão acadêmica autenticava usuários sem authorities, permitia que o cliente informasse `idUsuario` ao criar atendimento e não vinculava uma conta aos cadastros de paciente ou médico. A evolução confirmou os perfis `ADMIN`, `RECEPCAO`, `MEDICO` e `PACIENTE`, com a recepção responsável também por horários.
+
+**Opções consideradas:**
+1. manter todos os usuários com o mesmo acesso;
+2. aceitar o perfil enviado no cadastro público;
+3. adotar roles com menor privilégio, cadastro público fixo como paciente e vínculos opcionais e únicos da conta com paciente/médico.
+
+**Decisão:** Adotar `PerfilUsuario` persistido como texto. O cadastro público cria exclusivamente `PACIENTE`, independentemente de campos extras enviados. Contas internas serão criadas em fluxo administrativo posterior. `Usuario` poderá possuir vínculo um-para-um com `Paciente` ou `Medico`. O usuário registrador do atendimento será obtido do contexto autenticado, e não do body.
+
+**Matriz inicial:**
+
+| Recurso | ADMIN | RECEPCAO | MEDICO | PACIENTE |
+|---|---|---|---|---|
+| Pacientes, médicos e atendimentos administrativos | permitido | permitido | negado | negado |
+| Dados/agenda próprios | futuro endpoint com ownership | n/a | planejado | planejado |
+| Cadastro público | n/a | n/a | n/a | cria conta PACIENTE |
+
+**Motivo:** Evita escalação de privilégio e exposição cruzada enquanto os endpoints de ownership ainda não existem. É preferível negar temporariamente a médicos/pacientes do que liberar coleções completas.
+
+**Consequências:**
+- JWT passa a carregar o claim informativo `perfil`, mas a autorização usa as authorities recarregadas do banco;
+- alterações de perfil têm efeito sem esperar o token expirar;
+- migrations precisarão atribuir perfil seguro aos registros existentes e criar os vínculos;
+- endpoints próprios de médico/paciente serão um ciclo separado.
+
+**Evidências/arquivos relacionados:**
+- `src/main/java/com/mackito/clinica/model/PerfilUsuario.java`
+- `src/main/java/com/mackito/clinica/model/Usuario.java`
+- `src/main/java/com/mackito/clinica/config/SecurityConfig.java`
+- `src/main/java/com/mackito/clinica/service/AtendimentoService.java`
+
+---
+
 ## Modelo para próximas decisões
 
 ### ADR-XXX — Título

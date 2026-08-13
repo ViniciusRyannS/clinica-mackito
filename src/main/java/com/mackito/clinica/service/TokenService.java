@@ -27,6 +27,7 @@ public class TokenService {
     public String gerarToken(Usuario usuario) {
         return JWT.create()
                 .withSubject(usuario.getEmail())
+                .withClaim("perfil", usuario.getPerfil().name())
                 .withExpiresAt(dataExpiracao())
                 .sign(Algorithm.HMAC256(secret));
     }

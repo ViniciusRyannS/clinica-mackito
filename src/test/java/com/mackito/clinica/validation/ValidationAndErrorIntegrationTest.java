@@ -49,7 +49,7 @@ class ValidationAndErrorIntegrationTest {
     }
 
     @Test
-    @WithMockUser(username = "recepcao@example.com")
+    @WithMockUser(username = "recepcao@example.com", roles = "RECEPCAO")
     void deveRetornarCamposInvalidosAoCriarPaciente() throws Exception {
         mockMvc.perform(post("/pacientes")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -70,7 +70,7 @@ class ValidationAndErrorIntegrationTest {
     }
 
     @Test
-    @WithMockUser(username = "recepcao@example.com")
+    @WithMockUser(username = "recepcao@example.com", roles = "RECEPCAO")
     void deveRetornarCamposInvalidosAoCriarAtendimento() throws Exception {
         mockMvc.perform(post("/atendimentos")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -78,7 +78,6 @@ class ValidationAndErrorIntegrationTest {
                                 {
                                   "idPaciente": 0,
                                   "idMedico": null,
-                                  "idUsuario": -1,
                                   "dataAtendimento": "2020-01-01",
                                   "sala": ""
                                 }
@@ -86,13 +85,12 @@ class ValidationAndErrorIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.campos.idPaciente").exists())
                 .andExpect(jsonPath("$.campos.idMedico").value("O médico é obrigatório"))
-                .andExpect(jsonPath("$.campos.idUsuario").exists())
                 .andExpect(jsonPath("$.campos.dataAtendimento").exists())
                 .andExpect(jsonPath("$.campos.sala").value("A sala é obrigatória"));
     }
 
     @Test
-    @WithMockUser(username = "recepcao@example.com")
+    @WithMockUser(username = "recepcao@example.com", roles = "RECEPCAO")
     void deveRetornarNaoEncontradoAoAtualizarPacienteInexistente() throws Exception {
         mockMvc.perform(put("/pacientes/999999")
                         .contentType(MediaType.APPLICATION_JSON)

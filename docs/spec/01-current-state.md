@@ -262,3 +262,15 @@ Em 2026-08-13 foi concluído o segundo ciclo incremental:
 - quatro testes HTTP foram adicionados, elevando a suíte para dez testes aprovados.
 
 Regras de unicidade de CPF/CRM, roles/ownership e DTO seguro de cadastro continuam para ciclos próprios.
+
+Em 2026-08-13 foi iniciado o ciclo de perfis e identidade:
+
+- foram modelados `ADMIN`, `RECEPCAO`, `MEDICO` e `PACIENTE`;
+- o cadastro público passou a criar exclusivamente `PACIENTE` e retornar DTO sem senha/hash;
+- `Usuario` recebeu vínculos opcionais e únicos com `Paciente` e `Medico`;
+- o JWT passou a incluir o claim `perfil`, enquanto a autorização usa authorities recarregadas do banco;
+- endpoints administrativos de pacientes, médicos e atendimentos passaram a aceitar somente `ADMIN` e `RECEPCAO`;
+- `idUsuario` foi removido do request de atendimento e o registrador passou a vir do contexto autenticado;
+- a suíte passou a 15 testes, incluindo matriz inicial de autorização e proteção contra escalação no cadastro público.
+
+Endpoints de dados próprios para médico/paciente, criação administrativa de contas internas e migrations permanecem como próximos passos.

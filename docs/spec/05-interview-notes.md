@@ -25,6 +25,7 @@ Estrutura futura:
 | Estratégia inicial de banco/testes | A aplicação dependia de MySQL até para carregar contexto | Preservar MySQL no runtime e usar H2 somente em testes | Profile `test` com H2 em memória | Teste de contexto Spring/JPA |
 | Proteção de dados | Listagens de pacientes e atendimentos eram públicas | Manter públicos somente cadastro e login nesta etapa | Matriz inicial em `SecurityConfig` | MockMvc confirma bloqueio anônimo |
 | Validação e erros | Entradas inválidas e recursos ausentes podiam gerar respostas inconsistentes/500 | Criar contrato pequeno de erro e validar somente regras confirmadas | Bean Validation, `ApiError`, handler global e exceção de recurso ausente | Quatro testes MockMvc validam 400 e 404 |
+| Perfis e identidade | Todo usuário tinha o mesmo acesso e o cliente escolhia `idUsuario` do atendimento | Aplicar menor privilégio e derivar o registrador da autenticação | Enum de perfil, authorities, claim JWT, DTO seguro e matriz no Spring Security | 15 testes, incluindo permissões e cadastro sem escalação |
 
 ## 4. Fluxos que preciso explicar de ponta a ponta
 

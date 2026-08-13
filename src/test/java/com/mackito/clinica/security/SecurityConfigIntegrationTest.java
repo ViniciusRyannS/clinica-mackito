@@ -8,6 +8,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,6 +34,34 @@ class SecurityConfigIntegrationTest {
 
     @Test
     void deveBloquearListagemDeAtendimentosSemAutenticacao() throws Exception {
+        mockMvc.perform(get("/atendimentos"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void devePermitirPacientesParaAdmin() throws Exception {
+        mockMvc.perform(get("/pacientes"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "RECEPCAO")
+    void devePermitirAtendimentosParaRecepcao() throws Exception {
+        mockMvc.perform(get("/atendimentos"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "MEDICO")
+    void deveNegarListaCompletaDePacientesParaMedico() throws Exception {
+        mockMvc.perform(get("/pacientes"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "PACIENTE")
+    void deveNegarListaCompletaDeAtendimentosParaPaciente() throws Exception {
         mockMvc.perform(get("/atendimentos"))
                 .andExpect(status().isForbidden());
     }
