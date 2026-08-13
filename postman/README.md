@@ -15,9 +15,9 @@ Selecione o ambiente **Clínica Mackito - Local** e preencha somente valores loc
 
 ## Fluxo administrativo
 
-Os endpoints de pacientes, médicos e horários exigem `ADMIN` ou `RECEPCAO`. Por enquanto, preencha `staffToken` com o token de uma conta interna existente no banco local.
+Os endpoints de pacientes, médicos e horários exigem `ADMIN` ou `RECEPCAO`. Preencha `staffToken` com o token de uma conta interna local.
 
-O bootstrap seguro da primeira conta `ADMIN` e o endpoint administrativo para criar contas internas ainda serão implementados. A coleção não fornece credenciais padrão nem permite criar `ADMIN` pelo cadastro público.
+Em database vazio, configure `ADMIN_INITIAL_EMAIL` e `ADMIN_INITIAL_PASSWORD` somente no primeiro startup. Faça login com essa conta, copie o token para `staffToken` e use a pasta **Usuários internos** para criar recepção ou médico. A coleção não fornece credenciais padrão nem permite criar `ADMIN` pelo cadastro público.
 
 ## Observações
 

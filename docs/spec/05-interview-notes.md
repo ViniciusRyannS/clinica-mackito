@@ -28,6 +28,7 @@ Estrutura futura:
 | Perfis e identidade | Todo usuário tinha o mesmo acesso e o cliente escolhia `idUsuario` do atendimento | Aplicar menor privilégio e derivar o registrador da autenticação | Enum de perfil, authorities, claim JWT, DTO seguro e matriz no Spring Security | 15 testes, incluindo permissões e cadastro sem escalação |
 | Schema e unicidade | Hibernate alterava o banco implicitamente e cadastros podiam duplicar identificadores | Versionar schema e proteger nas camadas de aplicação/banco | Flyway V1, `ddl-auto=validate`, checks e constraints únicas | 16 testes; e-mail duplicado retorna 409 |
 | Contrato manual | Não havia coleção reproduzível para demonstrar a API | Versionar exemplos sem credenciais e manter Maven como validação principal | Coleção/ambiente Postman com scripts e variáveis vazias | JSON validado e fluxos alinhados aos endpoints atuais |
+| Primeiro administrador | Cadastro público não pode escolher perfil, mas um banco novo precisa de admin | Bootstrap opt-in sem senha padrão e endpoint interno protegido | Variáveis temporárias, BCrypt e `POST /usuarios` exclusivo de ADMIN | 22 testes, incluindo bootstrap e bloqueio da recepção |
 
 ## 4. Fluxos que preciso explicar de ponta a ponta
 

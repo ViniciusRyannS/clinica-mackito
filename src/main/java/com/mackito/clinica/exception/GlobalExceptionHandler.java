@@ -70,6 +70,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(criarErro(HttpStatus.CONFLICT, ex.getMessage(), request.getRequestURI(), null));
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiError> tratarRegraDeEntrada(
+            IllegalArgumentException ex,
+            HttpServletRequest request) {
+
+        return ResponseEntity.badRequest()
+                .body(criarErro(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI(), null));
+    }
+
     private ApiError criarErro(
             HttpStatus status,
             String mensagem,

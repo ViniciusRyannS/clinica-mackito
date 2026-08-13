@@ -284,3 +284,7 @@ Ainda em 2026-08-13, o schema MySQL passou a ser versionado pelo Flyway:
 - a suíte passou a 16 testes com o cenário de e-mail de conta duplicado.
 
 Também foi adicionada uma coleção Postman inicial, com fluxos públicos, administrativos e exemplos de erro. O ambiente versionado não contém credenciais ou tokens preenchidos. O bootstrap da primeira conta interna permanece pendente e está explicitamente documentado.
+
+O SQL acadêmico recuperado posteriormente confirmou incompatibilidade com o schema modernizado: nomes de tabelas/colunas divergentes e inserts com senha em texto puro. O database acadêmico deve ser preservado; a demo modernizada deve usar database novo.
+
+Foi implementado bootstrap opt-in da primeira conta `ADMIN`, sem credencial padrão, além de `POST /usuarios` exclusivo de administrador para criar `RECEPCAO`, `ADMIN` adicional e `MEDICO` vinculado. A suíte passou a 22 testes.

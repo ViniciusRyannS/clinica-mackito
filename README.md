@@ -39,6 +39,8 @@ A API usa a porta `8080` por padrão. O Flyway executa as migrations de `src/mai
 
 Esta migration inicial foi criada para um database novo. Se existir um schema acadêmico antigo, faça backup e não aponte a aplicação modernizada diretamente para ele: a estratégia de migração dos dados deverá ser avaliada separadamente.
 
+O SQL acadêmico antigo não é compatível com o schema atual: ele contém nomes de tabelas/colunas diferentes e exemplos de senha em texto puro. Preserve o database antigo e crie outro, como `clinica_mackito_demo`, para executar a versão modernizada.
+
 ## Testes
 
 ```powershell
@@ -87,6 +89,26 @@ Nesta etapa, `ADMIN` e `RECEPCAO` podem acessar os endpoints administrativos de 
 O cadastro público em `POST /auth/cadastrar` sempre cria uma conta `PACIENTE`; qualquer campo `perfil` enviado pelo cliente é ignorado. A resposta contém somente `id`, `email` e `perfil`, nunca senha ou hash.
 
 Ao criar um atendimento, o usuário responsável é obtido da autenticação corrente. O cliente não envia mais `idUsuario`.
+
+## Primeira conta administrativa
+
+Em um database novo e sem usuários, você pode fornecer temporariamente:
+
+```powershell
+$env:ADMIN_INITIAL_EMAIL = '<email-local-do-admin>'
+$env:ADMIN_INITIAL_PASSWORD = '<senha-local-com-pelo-menos-12-caracteres>'
+```
+
+No primeiro startup, a aplicação cria uma conta `ADMIN` com BCrypt. Se já existir qualquer usuário, o bootstrap não cria outra conta. Não existem credenciais administrativas padrão.
+
+Depois do primeiro login, remova as variáveis do terminal ou reinicie a aplicação sem elas:
+
+```powershell
+Remove-Item Env:ADMIN_INITIAL_EMAIL
+Remove-Item Env:ADMIN_INITIAL_PASSWORD
+```
+
+Somente `ADMIN` pode usar `POST /usuarios` para criar contas internas. `MEDICO` exige `idMedico` de um cadastro existente; `RECEPCAO` e novos administradores não usam esse vínculo. Contas `PACIENTE` usam o cadastro público.
 
 ## Unicidade
 

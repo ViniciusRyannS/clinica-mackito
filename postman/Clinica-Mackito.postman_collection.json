@@ -51,6 +51,30 @@
       ]
     },
     {
+      "name": "02 - Usuários internos (ADMIN)",
+      "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staffToken}}", "type": "string" }] },
+      "item": [
+        {
+          "name": "Criar recepção",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{recepcaoEmail}}\",\n  \"senha\": \"{{recepcaoSenha}}\",\n  \"perfil\": \"RECEPCAO\"\n}" },
+            "url": "{{baseUrl}}/usuarios"
+          }
+        },
+        {
+          "name": "Criar conta de médico",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{medicoEmail}}\",\n  \"senha\": \"{{medicoSenha}}\",\n  \"perfil\": \"MEDICO\",\n  \"idMedico\": {{medicoId}}\n}" },
+            "url": "{{baseUrl}}/usuarios"
+          }
+        }
+      ]
+    },
+    {
       "name": "02 - Pacientes (ADMIN/RECEPCAO)",
       "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staffToken}}", "type": "string" }] },
       "item": [

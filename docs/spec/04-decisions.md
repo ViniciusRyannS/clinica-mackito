@@ -147,6 +147,34 @@ Não é necessário criar uma ADR para cada mudança pequena. Registre apenas de
 
 ---
 
+## ADR-005 — Bootstrap da primeira conta administrativa
+
+**Status:** Aceita
+
+**Contexto:** O cadastro público é deliberadamente limitado a `PACIENTE`, mas um database novo precisa de uma primeira conta administrativa sem depender de `INSERT` manual, senha em texto puro ou credencial padrão.
+
+**Opções consideradas:**
+1. versionar um administrador e senha padrão;
+2. executar SQL manual com hash preparado;
+3. bootstrap opt-in por variáveis externas, somente quando a tabela de usuários estiver vazia.
+
+**Decisão:** `ADMIN_INITIAL_EMAIL` e `ADMIN_INITIAL_PASSWORD` são opcionais e devem ser fornecidos juntos. A senha exige pelo menos 12 caracteres, é armazenada com BCrypt e a criação só ocorre quando não existe nenhum usuário. Após isso, somente `ADMIN` cria contas internas por `POST /usuarios`.
+
+**Motivo:** Oferece inicialização reproduzível para ambiente local/demo sem versionar segredo nem abrir escalação pelo cadastro público.
+
+**Consequências:**
+- as variáveis devem ser removidas após o primeiro startup;
+- `MEDICO` exige vínculo com cadastro existente;
+- `RECEPCAO` gerencia horários, mas não cria contas internas;
+- rotação/recuperação de senha administrativa permanece como melhoria futura.
+
+**Evidências/arquivos relacionados:**
+- `src/main/java/com/mackito/clinica/config/AdminBootstrap.java`
+- `src/main/java/com/mackito/clinica/controller/UsuarioController.java`
+- `src/main/java/com/mackito/clinica/service/UsuarioService.java`
+
+---
+
 ## Modelo para próximas decisões
 
 ### ADR-XXX — Título
