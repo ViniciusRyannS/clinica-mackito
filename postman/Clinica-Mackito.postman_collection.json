@@ -1,0 +1,134 @@
+{
+  "info": {
+    "_postman_id": "9c5bd7df-75cb-4f50-b728-774d0b58ff42",
+    "name": "Clínica Mackito API",
+    "description": "Coleção inicial da API modernizada. Não contém credenciais ou tokens reais.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 - Autenticação pública",
+      "item": [
+        {
+          "name": "Cadastrar paciente",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{$randomEmail}}\",\n  \"senha\": \"{{pacienteSenha}}\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/cadastrar",
+            "description": "O cadastro público sempre cria perfil PACIENTE e nunca aceita elevação de perfil."
+          },
+          "event": [{
+            "listen": "test",
+            "script": { "exec": [
+              "pm.test('Retorna 201', () => pm.response.to.have.status(201));",
+              "pm.test('Não expõe senha', () => { const json = pm.response.json(); pm.expect(json).not.to.have.property('senha'); pm.expect(json.perfil).to.eql('PACIENTE'); });"
+            ] }
+          }]
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{loginEmail}}\",\n  \"senha\": \"{{loginSenha}}\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login"
+          },
+          "event": [{
+            "listen": "test",
+            "script": { "exec": [
+              "pm.test('Retorna 200', () => pm.response.to.have.status(200));",
+              "if (pm.response.code === 200) { pm.environment.set('token', pm.response.json().token); }"
+            ] }
+          }]
+        }
+      ]
+    },
+    {
+      "name": "02 - Pacientes (ADMIN/RECEPCAO)",
+      "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staffToken}}", "type": "string" }] },
+      "item": [
+        {
+          "name": "Listar pacientes",
+          "request": { "method": "GET", "url": "{{baseUrl}}/pacientes" },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Retorna 200', () => pm.response.to.have.status(200));"] } }]
+        },
+        {
+          "name": "Criar paciente",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nome\": \"Paciente Exemplo\",\n  \"cpf\": \"{{pacienteCpf}}\",\n  \"email\": \"{{pacienteEmail}}\",\n  \"telefone\": \"11999999999\"\n}" },
+            "url": "{{baseUrl}}/pacientes"
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - Médicos (ADMIN/RECEPCAO)",
+      "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staffToken}}", "type": "string" }] },
+      "item": [
+        {
+          "name": "Listar médicos",
+          "request": { "method": "GET", "url": "{{baseUrl}}/medicos" }
+        },
+        {
+          "name": "Criar médico",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nome\": \"Dra. Exemplo\",\n  \"crm\": \"{{medicoCrm}}\",\n  \"especialidade\": \"Clínica Geral\"\n}" },
+            "url": "{{baseUrl}}/medicos"
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - Horários e atendimentos (ADMIN/RECEPCAO)",
+      "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staffToken}}", "type": "string" }] },
+      "item": [
+        {
+          "name": "Listar atendimentos",
+          "request": { "method": "GET", "url": "{{baseUrl}}/atendimentos" }
+        },
+        {
+          "name": "Criar atendimento",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"idPaciente\": {{pacienteId}},\n  \"idMedico\": {{medicoId}},\n  \"dataAtendimento\": \"{{dataAtendimento}}\",\n  \"sala\": \"Sala 1\"\n}" },
+            "url": "{{baseUrl}}/atendimentos",
+            "description": "idUsuario não faz parte do body; o registrador é obtido do token."
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 - Exemplos de erro",
+      "item": [
+        {
+          "name": "Cadastro inválido - 400",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"invalido\",\n  \"senha\": \"123\"\n}" },
+            "url": "{{baseUrl}}/auth/cadastrar"
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Retorna validação 400', () => pm.response.to.have.status(400));", "pm.test('Possui erros por campo', () => pm.expect(pm.response.json().campos).to.be.an('object'));" ] } }]
+        },
+        {
+          "name": "Endpoint protegido sem token - 403",
+          "request": { "method": "GET", "auth": { "type": "noauth" }, "url": "{{baseUrl}}/pacientes" },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Bloqueia acesso anônimo', () => pm.response.to.have.status(403));"] } }]
+        }
+      ]
+    }
+  ],
+  "variable": [{ "key": "baseUrl", "value": "http://localhost:8080" }]
+}

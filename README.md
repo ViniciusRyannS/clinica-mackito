@@ -57,6 +57,8 @@ Os testes usam o profile `test` e um banco H2 em memória. Portanto, não exigem
 
 O Postman é indicado para explorar e demonstrar a API manualmente, mas não substitui os testes automatizados: a suíte Maven é repetível e detecta regressões sem depender de cliques ou de uma coleção local.
 
+A coleção inicial e o ambiente sem credenciais estão em [`postman/`](postman/README.md).
+
 ## Respostas de erro
 
 Entradas inválidas retornam `400 Bad Request` com um contrato previsível:
