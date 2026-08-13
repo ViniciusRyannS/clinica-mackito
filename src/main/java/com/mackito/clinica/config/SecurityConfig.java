@@ -39,13 +39,11 @@ public class SecurityConfig {
         return http.csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/cadastrar", "/pacientes", "/atendimentos").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/medicos", "/pacientes", "/atendimentos").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/atendimentos/paciente/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/cadastrar").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-                .cors().and()  // Habilita CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .build();
     }
 
