@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class Medico {
@@ -12,8 +14,16 @@ public class Medico {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "O nome é obrigatório")
+    @Size(min = 3, max = 100, message = "O nome deve ter entre 3 e 100 caracteres")
     private String nome;
+
+    @NotBlank(message = "O CRM é obrigatório")
+    @Size(min = 5, max = 20, message = "O CRM deve ter entre 5 e 20 caracteres")
     private String crm;
+
+    @NotBlank(message = "A especialidade é obrigatória")
+    @Size(min = 3, max = 50, message = "A especialidade deve ter entre 3 e 50 caracteres")
     private String especialidade;
 
     // Construtor vazio (obrigatório para o JPA)

@@ -1,5 +1,6 @@
 package com.mackito.clinica.service;
 
+import com.mackito.clinica.exception.RecursoNaoEncontradoException;
 import com.mackito.clinica.model.Paciente;
 import com.mackito.clinica.repository.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +28,15 @@ public class PacienteService {
     }
 
     public void deletar(Long id) {
+        if (!pacienteRepository.existsById(id)) {
+            throw new RecursoNaoEncontradoException("Paciente não encontrado com o ID: " + id);
+        }
         pacienteRepository.deleteById(id);
     }
 
     public Paciente atualizarPaciente(Long id, Paciente pacienteAtualizado) {
     Paciente pacienteExistente = pacienteRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Paciente não encontrado com o ID: " + id));
+        .orElseThrow(() -> new RecursoNaoEncontradoException("Paciente não encontrado com o ID: " + id));
 
     pacienteExistente.setNome(pacienteAtualizado.getNome());
     pacienteExistente.setCpf(pacienteAtualizado.getCpf());

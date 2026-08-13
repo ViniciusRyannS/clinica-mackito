@@ -251,3 +251,14 @@ Em 2026-08-12 foi concluído o primeiro ciclo incremental, sem reescrever o base
 - foi criada uma suíte inicial com seis testes para contexto, JWT e bloqueio anônimo de dados sensíveis.
 
 Ainda permanecem em aberto a autorização por roles/ownership, DTO seguro de cadastro, validações completas, tratamento uniforme de erros, migrations e catálogo público de serviços.
+
+Em 2026-08-13 foi concluído o segundo ciclo incremental:
+
+- entradas de autenticação, usuário, paciente, médico e atendimento receberam validações efetivas;
+- CPF passou a aceitar somente 11 dígitos e e-mails passaram a validar formato;
+- IDs de atendimento devem ser positivos, sala é obrigatória e data não pode estar no passado;
+- foi criado um contrato uniforme de erro com status, mensagem, path e erros por campo;
+- recursos ausentes em atualização/exclusão passaram a produzir `404`, e conflitos de integridade produzem `409` sem detalhes internos;
+- quatro testes HTTP foram adicionados, elevando a suíte para dez testes aprovados.
+
+Regras de unicidade de CPF/CRM, roles/ownership e DTO seguro de cadastro continuam para ciclos próprios.

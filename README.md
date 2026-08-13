@@ -50,5 +50,26 @@ Os testes usam o profile `test` e um banco H2 em memória. Portanto, não exigem
 - rejeição de segredo JWT fraco;
 - rejeição de token assinado com outro segredo;
 - bloqueio anônimo das listagens de pacientes e atendimentos.
+- validação HTTP de usuários, pacientes e atendimentos;
+- resposta `404` uniforme para recurso inexistente.
 
 O Postman é indicado para explorar e demonstrar a API manualmente, mas não substitui os testes automatizados: a suíte Maven é repetível e detecta regressões sem depender de cliques ou de uma coleção local.
+
+## Respostas de erro
+
+Entradas inválidas retornam `400 Bad Request` com um contrato previsível:
+
+```json
+{
+  "timestamp": "2026-08-13T02:12:51",
+  "status": 400,
+  "erro": "Bad Request",
+  "mensagem": "Campos inválidos",
+  "path": "/pacientes",
+  "campos": {
+    "email": "O email deve possuir um formato válido"
+  }
+}
+```
+
+Recursos inexistentes retornam `404 Not Found` no mesmo formato, sem o objeto `campos`. Violações de restrições persistidas retornam `409 Conflict` sem expor detalhes internos do banco.

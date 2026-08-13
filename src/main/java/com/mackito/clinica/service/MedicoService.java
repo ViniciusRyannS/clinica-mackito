@@ -1,5 +1,6 @@
 package com.mackito.clinica.service;
 
+import com.mackito.clinica.exception.RecursoNaoEncontradoException;
 import com.mackito.clinica.model.Medico;
 import com.mackito.clinica.repository.MedicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,8 @@ public class MedicoService {
     }
 
     public Medico atualizarMedico(Long id, Medico novoMedico) {
-        Medico medico = repository.findById(id).orElseThrow();
+        Medico medico = repository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Médico não encontrado com o ID: " + id));
         medico.setNome(novoMedico.getNome());
         medico.setCrm(novoMedico.getCrm());
         medico.setEspecialidade(novoMedico.getEspecialidade());
@@ -35,6 +37,9 @@ public class MedicoService {
     }
 
     public void deletar(Long id) {
+        if (!repository.existsById(id)) {
+            throw new RecursoNaoEncontradoException("Médico não encontrado com o ID: " + id);
+        }
         repository.deleteById(id);
     }
 

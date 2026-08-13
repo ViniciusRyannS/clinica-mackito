@@ -1,5 +1,6 @@
 package com.mackito.clinica.service;
 
+import com.mackito.clinica.exception.RecursoNaoEncontradoException;
 import com.mackito.clinica.model.dto.AtendimentoDTO;
 import com.mackito.clinica.model.dto.AtendimentoRequestDTO;
 import com.mackito.clinica.model.Atendimento;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,18 +34,20 @@ public class AtendimentoService {
     private PacienteRepository pacienteRepository;
 
     public AtendimentoDTO salvar(AtendimentoRequestDTO dto) {
-        Optional<Medico> medicoOpt = medicoRepository.findById(dto.getIdMedico());
-        Optional<Paciente> pacienteOpt = pacienteRepository.findById(dto.getIdPaciente());
-        Optional<Usuario> usuarioOpt = usuarioRepository.findById(dto.getIdUsuario());
-
-        if (medicoOpt.isEmpty() || pacienteOpt.isEmpty() || usuarioOpt.isEmpty()) {
-            throw new RuntimeException("Médico, Paciente ou Usuário não encontrado");
-        }
+        Medico medico = medicoRepository.findById(dto.getIdMedico())
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "Médico não encontrado com o ID: " + dto.getIdMedico()));
+        Paciente paciente = pacienteRepository.findById(dto.getIdPaciente())
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "Paciente não encontrado com o ID: " + dto.getIdPaciente()));
+        Usuario usuario = usuarioRepository.findById(dto.getIdUsuario())
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "Usuário não encontrado com o ID: " + dto.getIdUsuario()));
 
         Atendimento atendimento = new Atendimento();
-        atendimento.setMedico(medicoOpt.get());
-        atendimento.setPaciente(pacienteOpt.get());
-        atendimento.setUsuario(usuarioOpt.get());
+        atendimento.setMedico(medico);
+        atendimento.setPaciente(paciente);
+        atendimento.setUsuario(usuario);
         atendimento.setDataAtendimento(dto.getDataAtendimento());
         atendimento.setSala(dto.getSala());
 
@@ -76,6 +78,9 @@ public class AtendimentoService {
     }
 
     public void cancelarAtendimento(Long id) {
+        if (!atendimentoRepository.existsById(id)) {
+            throw new RecursoNaoEncontradoException("Atendimento não encontrado com o ID: " + id);
+        }
         atendimentoRepository.deleteById(id);
     }
 

@@ -4,6 +4,7 @@ import com.mackito.clinica.model.dto.AtendimentoDTO;
 import com.mackito.clinica.model.dto.AtendimentoRequestDTO;
 import com.mackito.clinica.service.AtendimentoService;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class AtendimentoController {
     private AtendimentoService atendimentoService;
 
     @PostMapping
-    public ResponseEntity<AtendimentoDTO> criar(@RequestBody AtendimentoRequestDTO dto) {
+    public ResponseEntity<AtendimentoDTO> criar(@RequestBody @Valid AtendimentoRequestDTO dto) {
         var atendimento = atendimentoService.salvar(dto);
         return ResponseEntity.ok(atendimento);
     }

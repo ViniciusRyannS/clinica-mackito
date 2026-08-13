@@ -1,6 +1,9 @@
 package com.mackito.clinica.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -16,9 +19,13 @@ public class Usuario implements UserDetails {
     private Long id;
 
     @Column(unique = true, nullable = false)
+    @NotBlank(message = "O e-mail é obrigatório")
+    @Email(message = "O e-mail deve possuir um formato válido")
     private String email;
 
     @Column(nullable = false)
+    @NotBlank(message = "A senha é obrigatória")
+    @Size(min = 8, max = 72, message = "A senha deve ter entre 8 e 72 caracteres")
     private String senha;
 
     public Usuario() {}

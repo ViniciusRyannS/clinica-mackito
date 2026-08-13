@@ -24,6 +24,7 @@ Estrutura futura:
 | Configuração segura | JWT e MySQL possuíam valores literais | Exigir configuração externa sem fallback inseguro | Placeholders em `application.properties` e injeção do JWT no `TokenService` | Testes JWT e busca por valores antigos |
 | Estratégia inicial de banco/testes | A aplicação dependia de MySQL até para carregar contexto | Preservar MySQL no runtime e usar H2 somente em testes | Profile `test` com H2 em memória | Teste de contexto Spring/JPA |
 | Proteção de dados | Listagens de pacientes e atendimentos eram públicas | Manter públicos somente cadastro e login nesta etapa | Matriz inicial em `SecurityConfig` | MockMvc confirma bloqueio anônimo |
+| Validação e erros | Entradas inválidas e recursos ausentes podiam gerar respostas inconsistentes/500 | Criar contrato pequeno de erro e validar somente regras confirmadas | Bean Validation, `ApiError`, handler global e exceção de recurso ausente | Quatro testes MockMvc validam 400 e 404 |
 
 ## 4. Fluxos que preciso explicar de ponta a ponta
 
