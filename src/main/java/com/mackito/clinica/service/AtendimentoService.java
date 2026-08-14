@@ -34,6 +34,9 @@ public class AtendimentoService {
     @Autowired
     private PacienteRepository pacienteRepository;
 
+    @Autowired
+    private DisponibilidadeAgendaService disponibilidadeAgendaService;
+
     public AtendimentoDTO salvar(AtendimentoRequestDTO dto) {
         Medico medico = medicoRepository.findById(dto.getIdMedico())
                 .orElseThrow(() -> new RecursoNaoEncontradoException(
@@ -46,11 +49,16 @@ public class AtendimentoService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException(
                         "Usuário autenticado não encontrado"));
 
+        disponibilidadeAgendaService.validar(medico.getId(), dto.getDataAtendimento(),
+                dto.getHoraInicial(), dto.getDuracaoMinutos(), dto.getSala());
+
         Atendimento atendimento = new Atendimento();
         atendimento.setMedico(medico);
         atendimento.setPaciente(paciente);
         atendimento.setUsuario(usuario);
         atendimento.setDataAtendimento(dto.getDataAtendimento());
+        atendimento.setHoraInicial(dto.getHoraInicial());
+        atendimento.setDuracaoMinutos(dto.getDuracaoMinutos());
         atendimento.setSala(dto.getSala());
 
         Atendimento salvo = atendimentoRepository.save(atendimento);
@@ -62,6 +70,8 @@ public class AtendimentoService {
             salvo.getMedico().getId(),
             salvo.getMedico().getNome(),
             salvo.getDataAtendimento(),
+            salvo.getHoraInicial(),
+            salvo.getDuracaoMinutos(),
             salvo.getSala()
         );
     }
@@ -75,6 +85,8 @@ public class AtendimentoService {
                 a.getMedico().getId(),
                 a.getMedico().getNome(),
                 a.getDataAtendimento(),
+                a.getHoraInicial(),
+                a.getDuracaoMinutos(),
                 a.getSala()
             )).collect(Collectors.toList());
     }
@@ -97,6 +109,8 @@ public class AtendimentoService {
                 a.getMedico().getId(),
                 a.getMedico().getNome(),
                 a.getDataAtendimento(),
+                a.getHoraInicial(),
+                a.getDuracaoMinutos(),
                 a.getSala()
             )).collect(Collectors.toList());
     }
@@ -111,6 +125,8 @@ public class AtendimentoService {
             a.getMedico().getId(),
             a.getMedico().getNome(),
             a.getDataAtendimento(),
+            a.getHoraInicial(),
+            a.getDuracaoMinutos(),
             a.getSala()
         )).collect(Collectors.toList());
 }

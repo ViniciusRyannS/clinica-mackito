@@ -16,15 +16,18 @@ public class SolicitacaoAgendamentoService {
     private final UsuarioRepository usuarioRepository;
     private final MedicoRepository medicoRepository;
     private final AtendimentoRepository atendimentoRepository;
+    private final DisponibilidadeAgendaService disponibilidadeAgendaService;
 
     public SolicitacaoAgendamentoService(SolicitacaoAgendamentoRepository solicitacaoRepository,
                                          UsuarioRepository usuarioRepository,
                                          MedicoRepository medicoRepository,
-                                         AtendimentoRepository atendimentoRepository) {
+                                         AtendimentoRepository atendimentoRepository,
+                                         DisponibilidadeAgendaService disponibilidadeAgendaService) {
         this.solicitacaoRepository = solicitacaoRepository;
         this.usuarioRepository = usuarioRepository;
         this.medicoRepository = medicoRepository;
         this.atendimentoRepository = atendimentoRepository;
+        this.disponibilidadeAgendaService = disponibilidadeAgendaService;
     }
 
     @Transactional
@@ -36,7 +39,7 @@ public class SolicitacaoAgendamentoService {
         Medico medico = medicoRepository.findById(dto.idMedico())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Médico não encontrado com o ID: " + dto.idMedico()));
         return paraDTO(solicitacaoRepository.save(new SolicitacaoAgendamento(
-                usuario.getPaciente(), medico, dto.dataPreferida(), normalizar(dto.observacao()))));
+                usuario.getPaciente(), medico, dto.dataPreferida(), dto.horaPreferida(), normalizar(dto.observacao()))));
     }
 
     @Transactional(readOnly = true)
@@ -58,9 +61,11 @@ public class SolicitacaoAgendamentoService {
     public SolicitacaoAgendamentoDTO confirmar(Long id, ConfirmacaoSolicitacaoDTO dto) {
         SolicitacaoAgendamento solicitacao = buscarPendente(id);
         Usuario responsavel = usuarioAutenticado();
+        disponibilidadeAgendaService.validar(solicitacao.getMedico().getId(), solicitacao.getDataPreferida(),
+                dto.horaInicial(), dto.duracaoMinutos(), dto.sala());
         Atendimento atendimento = atendimentoRepository.save(new Atendimento(
                 solicitacao.getPaciente(), solicitacao.getMedico(), responsavel,
-                solicitacao.getDataPreferida(), dto.sala()));
+                solicitacao.getDataPreferida(), dto.horaInicial(), dto.duracaoMinutos(), dto.sala()));
         solicitacao.confirmar(responsavel, atendimento);
         return paraDTO(solicitacaoRepository.save(solicitacao));
     }
@@ -92,7 +97,7 @@ public class SolicitacaoAgendamentoService {
 
     private SolicitacaoAgendamentoDTO paraDTO(SolicitacaoAgendamento s) {
         return new SolicitacaoAgendamentoDTO(s.getId(), s.getPaciente().getId(), s.getPaciente().getNome(),
-                s.getMedico().getId(), s.getMedico().getNome(), s.getDataPreferida(), s.getObservacao(),
+                s.getMedico().getId(), s.getMedico().getNome(), s.getDataPreferida(), s.getHoraPreferida(), s.getObservacao(),
                 s.getStatus(), s.getMotivoRejeicao(), s.getAtendimento() == null ? null : s.getAtendimento().getId(),
                 s.getCriadaEm(), s.getDecididaEm());
     }

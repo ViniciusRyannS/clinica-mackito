@@ -1,6 +1,7 @@
 package com.mackito.clinica.model.dto;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class AtendimentoDTO {
 
@@ -10,15 +11,20 @@ public class AtendimentoDTO {
     private Long idMedico;
     private String nomeMedico;
     private LocalDate dataAtendimento;
+    private LocalTime horaInicial;
+    private Integer duracaoMinutos;
     private String sala;
 
-    public AtendimentoDTO(Long id, Long idPaciente, String nomePaciente, Long idMedico, String nomeMedico, LocalDate dataAtendimento, String sala) {
+    public AtendimentoDTO(Long id, Long idPaciente, String nomePaciente, Long idMedico, String nomeMedico,
+                          LocalDate dataAtendimento, LocalTime horaInicial, Integer duracaoMinutos, String sala) {
         this.id = id;
         this.idPaciente = idPaciente;
         this.nomePaciente = nomePaciente;
         this.idMedico = idMedico;
         this.nomeMedico = nomeMedico;
         this.dataAtendimento = dataAtendimento;
+        this.horaInicial = horaInicial;
+        this.duracaoMinutos = duracaoMinutos;
         this.sala = sala;
     }
 
@@ -52,6 +58,8 @@ public class AtendimentoDTO {
     public String getSala() {
         return sala;
     }
+    public LocalTime getHoraInicial() { return horaInicial; }
+    public Integer getDuracaoMinutos() { return duracaoMinutos; }
 
     // Setters
     public void setId(Long id) {
@@ -81,4 +89,6 @@ public class AtendimentoDTO {
     public void setSala(String sala) {
         this.sala = sala;
     }
+    public void setHoraInicial(LocalTime horaInicial) { this.horaInicial = horaInicial; }
+    public void setDuracaoMinutos(Integer duracaoMinutos) { this.duracaoMinutos = duracaoMinutos; }
 }

@@ -107,6 +107,7 @@ public class MeuPerfilService {
     private AtendimentoDTO paraAtendimentoDTO(Atendimento atendimento) {
         return new AtendimentoDTO(atendimento.getId(), atendimento.getPaciente().getId(),
                 atendimento.getPaciente().getNome(), atendimento.getMedico().getId(),
-                atendimento.getMedico().getNome(), atendimento.getDataAtendimento(), atendimento.getSala());
+                atendimento.getMedico().getNome(), atendimento.getDataAtendimento(), atendimento.getHoraInicial(),
+                atendimento.getDuracaoMinutos(), atendimento.getSala());
     }
 }

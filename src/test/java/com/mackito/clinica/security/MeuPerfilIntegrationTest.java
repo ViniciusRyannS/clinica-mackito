@@ -103,8 +103,8 @@ class MeuPerfilIntegrationTest {
         Usuario usuario = new Usuario("paciente@example.com", "hash-seguro", PerfilUsuario.PACIENTE);
         usuario.setPaciente(proprio);
         usuarioRepository.save(usuario);
-        atendimentoRepository.save(new Atendimento(proprio, medico, recepcao, LocalDate.of(2026, 9, 10), "A1"));
-        atendimentoRepository.save(new Atendimento(outro, medico, recepcao, LocalDate.of(2026, 9, 11), "B2"));
+        atendimentoRepository.save(new Atendimento(proprio, medico, recepcao, LocalDate.of(2026, 9, 10), java.time.LocalTime.of(9, 0), 30, "A1"));
+        atendimentoRepository.save(new Atendimento(outro, medico, recepcao, LocalDate.of(2026, 9, 11), java.time.LocalTime.of(10, 0), 30, "B2"));
 
         mockMvc.perform(get("/me/atendimentos"))
                 .andExpect(status().isOk())
@@ -124,8 +124,8 @@ class MeuPerfilIntegrationTest {
         Usuario usuario = new Usuario("medico@example.com", "hash-seguro", PerfilUsuario.MEDICO);
         usuario.setMedico(proprio);
         usuarioRepository.save(usuario);
-        atendimentoRepository.save(new Atendimento(paciente, proprio, recepcao, LocalDate.of(2026, 9, 10), "A1"));
-        atendimentoRepository.save(new Atendimento(paciente, outro, recepcao, LocalDate.of(2026, 9, 11), "B2"));
+        atendimentoRepository.save(new Atendimento(paciente, proprio, recepcao, LocalDate.of(2026, 9, 10), java.time.LocalTime.of(9, 0), 30, "A1"));
+        atendimentoRepository.save(new Atendimento(paciente, outro, recepcao, LocalDate.of(2026, 9, 11), java.time.LocalTime.of(10, 0), 30, "B2"));
 
         mockMvc.perform(get("/me/atendimentos"))
                 .andExpect(status().isOk())

@@ -101,7 +101,9 @@ O paciente não cria um atendimento diretamente. Ele envia uma preferência por 
 - `PATCH /solicitacoes-agendamento/{id}/rejeitar`: exige uma justificativa;
 - `GET /me/solicitacoes-agendamento`: permite ao paciente acompanhar o status.
 
-Os estados são `PENDENTE`, `CONFIRMADA` e `REJEITADA`. Nesta versão, `dataPreferida` representa o dia desejado; faixas de horário e detecção de conflito serão tratadas em um ciclo posterior.
+Os estados são `PENDENTE`, `CONFIRMADA` e `REJEITADA`. O paciente informa `dataPreferida` e `horaPreferida`; a recepção pode ajustar a hora e define duração e sala ao confirmar. A duração aceita fica entre 15 e 240 minutos.
+
+A confirmação rejeita sobreposição do mesmo médico ou da mesma sala. Intervalos consecutivos são permitidos: uma consulta que termina às `09:30` não bloqueia outra que começa às `09:30`. Consultas devem terminar no mesmo dia. Regras de expediente ainda não foram definidas.
 
 O cadastro público em `POST /auth/cadastrar` sempre cria uma conta `PACIENTE`; qualquer campo `perfil` enviado pelo cliente é ignorado. A resposta contém somente `id`, `email` e `perfil`, nunca senha ou hash.
 

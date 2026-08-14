@@ -7,6 +7,9 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
 
 public class AtendimentoRequestDTO {
     @NotNull(message = "O paciente é obrigatório")
@@ -18,6 +21,12 @@ public class AtendimentoRequestDTO {
     @NotNull(message = "A data do atendimento é obrigatória")
     @FutureOrPresent(message = "A data do atendimento não pode estar no passado")
     private LocalDate dataAtendimento;
+    @NotNull(message = "A hora inicial é obrigatória")
+    private LocalTime horaInicial;
+    @NotNull(message = "A duração é obrigatória")
+    @Min(value = 15, message = "A duração mínima é de 15 minutos")
+    @Max(value = 240, message = "A duração máxima é de 240 minutos")
+    private Integer duracaoMinutos;
     @NotBlank(message = "A sala é obrigatória")
     @Size(max = 50, message = "A sala deve possuir no máximo 50 caracteres")
     private String sala;
@@ -45,6 +54,10 @@ public class AtendimentoRequestDTO {
     public void setDataAtendimento(LocalDate dataAtendimento) {
         this.dataAtendimento = dataAtendimento;
     }
+    public LocalTime getHoraInicial() { return horaInicial; }
+    public void setHoraInicial(LocalTime horaInicial) { this.horaInicial = horaInicial; }
+    public Integer getDuracaoMinutos() { return duracaoMinutos; }
+    public void setDuracaoMinutos(Integer duracaoMinutos) { this.duracaoMinutos = duracaoMinutos; }
 
     public String getSala() {
         return sala;

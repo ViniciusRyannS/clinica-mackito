@@ -166,12 +166,41 @@ Não é necessário criar uma ADR para cada mudança pequena. Registre apenas de
 - confirmação e criação do atendimento são transacionais;
 - paciente acompanha somente as próprias solicitações;
 - médico não processa solicitações nesta etapa;
-- horários do dia e regras de conflito permanecem no backlog.
+- horário preferido é informado pelo paciente, mas a recepção pode ajustá-lo na confirmação;
+- regras de expediente permanecem no backlog.
 
 **Evidências/arquivos relacionados:**
 - `src/main/java/com/mackito/clinica/model/SolicitacaoAgendamento.java`
 - `src/main/java/com/mackito/clinica/service/SolicitacaoAgendamentoService.java`
 - `src/main/resources/db/migration/V2__criar_solicitacoes_agendamento.sql`
+- `src/test/java/com/mackito/clinica/security/SolicitacaoAgendamentoIntegrationTest.java`
+
+---
+
+## ADR-008 — Horário, duração e conflito de agenda
+
+**Status:** Aceita
+
+**Contexto:** Uma data isolada não representa adequadamente a ocupação do médico ou da sala. A recepção precisa ajustar o horário solicitado e definir a duração real.
+
+**Opções consideradas:**
+1. duração fixa para todos os atendimentos;
+2. duração variável definida pela recepção;
+3. grade completa de expediente e disponibilidade.
+
+**Decisão:** O paciente informa `horaPreferida`. Na confirmação, a recepção informa `horaInicial`, duração entre 15 e 240 minutos e sala. A aplicação rejeita sobreposição para o mesmo médico ou sala e permite intervalos consecutivos. O atendimento deve terminar no mesmo dia.
+
+**Motivo:** Resolve conflitos reais com regras pequenas e compreensíveis, sem antecipar uma grade de expediente ainda não definida.
+
+**Consequências:**
+- a migration V3 atribui `08:00` e 30 minutos aos registros legados que não possuíam horário;
+- a checagem é aplicada tanto à confirmação de solicitação quanto à criação administrativa direta;
+- a proteção atual ocorre na transação da aplicação; concorrência simultânea distribuída exigirá estratégia adicional;
+- expediente, feriados e indisponibilidades do médico permanecem fora do escopo.
+
+**Evidências/arquivos relacionados:**
+- `src/main/java/com/mackito/clinica/service/DisponibilidadeAgendaService.java`
+- `src/main/resources/db/migration/V3__adicionar_horario_e_duracao.sql`
 - `src/test/java/com/mackito/clinica/security/SolicitacaoAgendamentoIntegrationTest.java`
 
 ---

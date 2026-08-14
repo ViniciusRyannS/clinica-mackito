@@ -126,7 +126,7 @@
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"idPaciente\": {{pacienteId}},\n  \"idMedico\": {{medicoId}},\n  \"dataAtendimento\": \"{{dataAtendimento}}\",\n  \"sala\": \"Sala 1\"\n}" },
+            "body": { "mode": "raw", "raw": "{\n  \"idPaciente\": {{pacienteId}},\n  \"idMedico\": {{medicoId}},\n  \"dataAtendimento\": \"{{dataAtendimento}}\",\n  \"horaInicial\": \"09:00\",\n  \"duracaoMinutos\": 30,\n  \"sala\": \"Sala 1\"\n}" },
             "url": "{{baseUrl}}/atendimentos",
             "description": "idUsuario não faz parte do body; o registrador é obtido do token."
           }
@@ -168,7 +168,7 @@
         {
           "name": "Paciente solicita agendamento",
           "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
-          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"idMedico\": {{medicoId}},\n  \"dataPreferida\": \"{{dataAtendimento}}\",\n  \"observacao\": \"Preferência pelo período da manhã\"\n}" }, "url": "{{baseUrl}}/me/solicitacoes-agendamento" }
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"idMedico\": {{medicoId}},\n  \"dataPreferida\": \"{{dataAtendimento}}\",\n  \"horaPreferida\": \"09:00\",\n  \"observacao\": \"Preferência pelo período da manhã\"\n}" }, "url": "{{baseUrl}}/me/solicitacoes-agendamento" }
         },
         {
           "name": "Recepção lista solicitações",
@@ -178,7 +178,7 @@
         {
           "name": "Recepção confirma solicitação",
           "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staffToken}}", "type": "string" }] },
-          "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"sala\": \"Sala 1\"\n}" }, "url": "{{baseUrl}}/solicitacoes-agendamento/{{solicitacaoId}}/confirmar" }
+          "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"horaInicial\": \"09:30\",\n  \"duracaoMinutos\": 30,\n  \"sala\": \"Sala 1\"\n}" }, "url": "{{baseUrl}}/solicitacoes-agendamento/{{solicitacaoId}}/confirmar" }
         },
         {
           "name": "Recepção rejeita solicitação",

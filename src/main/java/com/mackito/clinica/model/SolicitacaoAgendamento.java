@@ -3,6 +3,7 @@ package com.mackito.clinica.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "solicitacoes_agendamento")
@@ -21,6 +22,9 @@ public class SolicitacaoAgendamento {
 
     @Column(name = "data_preferida", nullable = false)
     private LocalDate dataPreferida;
+
+    @Column(name = "hora_preferida", nullable = false)
+    private LocalTime horaPreferida;
 
     @Column(length = 500)
     private String observacao;
@@ -48,10 +52,12 @@ public class SolicitacaoAgendamento {
 
     public SolicitacaoAgendamento() {}
 
-    public SolicitacaoAgendamento(Paciente paciente, Medico medico, LocalDate dataPreferida, String observacao) {
+    public SolicitacaoAgendamento(Paciente paciente, Medico medico, LocalDate dataPreferida,
+                                  LocalTime horaPreferida, String observacao) {
         this.paciente = paciente;
         this.medico = medico;
         this.dataPreferida = dataPreferida;
+        this.horaPreferida = horaPreferida;
         this.observacao = observacao;
         this.criadaEm = LocalDateTime.now();
     }
@@ -60,6 +66,7 @@ public class SolicitacaoAgendamento {
     public Paciente getPaciente() { return paciente; }
     public Medico getMedico() { return medico; }
     public LocalDate getDataPreferida() { return dataPreferida; }
+    public LocalTime getHoraPreferida() { return horaPreferida; }
     public String getObservacao() { return observacao; }
     public StatusSolicitacao getStatus() { return status; }
     public String getMotivoRejeicao() { return motivoRejeicao; }

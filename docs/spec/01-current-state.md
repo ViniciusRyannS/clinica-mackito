@@ -298,3 +298,5 @@ Na sequência, foi concluído o ownership de dados pessoais:
 - cinco testes de integração cobrem vínculo, duplicidade, separação de dados e autorização por perfil.
 
 Foi adotada a solicitação de agendamento com confirmação humana: o paciente escolhe médico e data preferida, acompanha o próprio pedido e não cria atendimento diretamente. `ADMIN`/`RECEPCAO` confirma com sala ou rejeita com motivo. A migration V2 versiona a nova tabela e quatro testes cobrem o fluxo e suas permissões.
+
+O ciclo seguinte acrescentou hora preferida à solicitação e hora inicial/duração ao atendimento. A recepção pode ajustar a preferência na confirmação. A aplicação bloqueia sobreposição do mesmo médico ou sala, permite intervalos consecutivos e a migration V3 preenche registros legados com `08:00`/30 minutos antes de tornar as colunas obrigatórias.

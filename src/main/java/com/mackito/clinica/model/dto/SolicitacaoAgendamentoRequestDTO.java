@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 public record SolicitacaoAgendamentoRequestDTO(
         @NotNull(message = "O médico é obrigatório")
@@ -13,6 +14,8 @@ public record SolicitacaoAgendamentoRequestDTO(
         @NotNull(message = "A data preferida é obrigatória")
         @FutureOrPresent(message = "A data preferida não pode estar no passado")
         LocalDate dataPreferida,
+        @NotNull(message = "A hora preferida é obrigatória")
+        LocalTime horaPreferida,
         @Size(max = 500, message = "A observação deve possuir no máximo 500 caracteres")
         String observacao) {
 }

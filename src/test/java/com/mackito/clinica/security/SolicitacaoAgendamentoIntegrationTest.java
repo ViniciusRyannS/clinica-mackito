@@ -47,7 +47,7 @@ class SolicitacaoAgendamentoIntegrationTest {
         mockMvc.perform(post("/me/solicitacoes-agendamento")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"idMedico":%d,"dataPreferida":"2099-09-10","observacao":"Prefiro pela manhã","idPaciente":999}
+                                {"idMedico":%d,"dataPreferida":"2099-09-10","horaPreferida":"09:00","observacao":"Prefiro pela manhã","idPaciente":999}
                                 """.formatted(medico.getId())))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.nomePaciente").value("Paciente Exemplo"))
@@ -63,7 +63,7 @@ class SolicitacaoAgendamentoIntegrationTest {
 
         mockMvc.perform(patch("/solicitacoes-agendamento/{id}/confirmar", solicitacao.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"sala\":\"Sala 2\"}"))
+                        .content("{\"horaInicial\":\"09:30\",\"duracaoMinutos\":30,\"sala\":\"Sala 2\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("CONFIRMADA"))
                 .andExpect(jsonPath("$.idAtendimento").isNumber());
@@ -82,7 +82,7 @@ class SolicitacaoAgendamentoIntegrationTest {
 
         mockMvc.perform(patch("/solicitacoes-agendamento/{id}/confirmar", solicitacao.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"sala\":\"Sala 2\"}"))
+                        .content("{\"horaInicial\":\"09:30\",\"duracaoMinutos\":30,\"sala\":\"Sala 2\"}"))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.mensagem").value("A solicitação já foi processada"));
     }
@@ -94,6 +94,58 @@ class SolicitacaoAgendamentoIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"motivo\":\"Indisponível\"}"))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "recepcao@example.com", roles = "RECEPCAO")
+    void deveBloquearSobreposicaoNaAgendaDoMedico() throws Exception {
+        SolicitacaoAgendamento solicitacao = prepararSolicitacao();
+        Usuario recepcao = usuarioRepository.save(
+                new Usuario("recepcao@example.com", "hash-seguro", PerfilUsuario.RECEPCAO));
+        atendimentoRepository.save(new Atendimento(solicitacao.getPaciente(), solicitacao.getMedico(), recepcao,
+                solicitacao.getDataPreferida(), java.time.LocalTime.of(9, 0), 60, "Sala 1"));
+
+        mockMvc.perform(patch("/solicitacoes-agendamento/{id}/confirmar", solicitacao.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"horaInicial\":\"09:30\",\"duracaoMinutos\":30,\"sala\":\"Sala 2\"}"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.mensagem").value("O médico já possui atendimento nesse intervalo"));
+    }
+
+    @Test
+    @WithMockUser(username = "recepcao@example.com", roles = "RECEPCAO")
+    void deveBloquearSalaSobrepostaMasPermitirHorarioConsecutivo() throws Exception {
+        SolicitacaoAgendamento solicitacao = prepararSolicitacao();
+        Usuario recepcao = usuarioRepository.save(
+                new Usuario("recepcao@example.com", "hash-seguro", PerfilUsuario.RECEPCAO));
+        Medico outroMedico = medicoRepository.save(new Medico("Dr. Outro", "CRM-OUTRO", "Cardiologia"));
+        atendimentoRepository.save(new Atendimento(solicitacao.getPaciente(), outroMedico, recepcao,
+                solicitacao.getDataPreferida(), java.time.LocalTime.of(9, 0), 30, "Sala 1"));
+
+        mockMvc.perform(patch("/solicitacoes-agendamento/{id}/confirmar", solicitacao.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"horaInicial\":\"09:15\",\"duracaoMinutos\":30,\"sala\":\"Sala 1\"}"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.mensagem").value("A sala já está ocupada nesse intervalo"));
+
+        mockMvc.perform(patch("/solicitacoes-agendamento/{id}/confirmar", solicitacao.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"horaInicial\":\"09:30\",\"duracaoMinutos\":30,\"sala\":\"Sala 1\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("CONFIRMADA"));
+    }
+
+    @Test
+    @WithMockUser(username = "recepcao@example.com", roles = "RECEPCAO")
+    void atendimentoNaoPodeTerminarNoDiaSeguinte() throws Exception {
+        SolicitacaoAgendamento solicitacao = prepararSolicitacao();
+        usuarioRepository.save(new Usuario("recepcao@example.com", "hash-seguro", PerfilUsuario.RECEPCAO));
+
+        mockMvc.perform(patch("/solicitacoes-agendamento/{id}/confirmar", solicitacao.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"horaInicial\":\"23:50\",\"duracaoMinutos\":30,\"sala\":\"Sala 1\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem").value("O atendimento deve terminar no mesmo dia"));
     }
 
     private Medico prepararPacienteEMedico() {
@@ -109,6 +161,7 @@ class SolicitacaoAgendamentoIntegrationTest {
         Medico medico = prepararPacienteEMedico();
         Paciente paciente = pacienteRepository.findAll().get(0);
         return solicitacaoRepository.save(new SolicitacaoAgendamento(
-                paciente, medico, java.time.LocalDate.of(2099, 9, 10), "Preferência pela manhã"));
+                paciente, medico, java.time.LocalDate.of(2099, 9, 10), java.time.LocalTime.of(9, 0),
+                "Preferência pela manhã"));
     }
 }
