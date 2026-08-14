@@ -147,6 +147,35 @@ Não é necessário criar uma ADR para cada mudança pequena. Registre apenas de
 
 ---
 
+## ADR-007 — Solicitação de agendamento confirmada pela recepção
+
+**Status:** Aceita
+
+**Contexto:** O paciente precisa manifestar interesse em uma consulta sem criar diretamente um horário que pode estar indisponível. O modelo atual registra apenas data, não uma faixa de horário.
+
+**Opções consideradas:**
+1. permitir autoagendamento imediato;
+2. criar uma solicitação para confirmação da recepção;
+3. manter agendamento exclusivamente interno.
+
+**Decisão:** O paciente cria uma solicitação `PENDENTE` para um médico e uma data preferida. `ADMIN` ou `RECEPCAO` pode confirmá-la, criando o atendimento e definindo a sala, ou rejeitá-la com motivo. Uma decisão não pode ser refeita.
+
+**Motivo:** Preserva a facilidade para o paciente sem prometer disponibilidade que o domínio ainda não controla.
+
+**Consequências:**
+- confirmação e criação do atendimento são transacionais;
+- paciente acompanha somente as próprias solicitações;
+- médico não processa solicitações nesta etapa;
+- horários do dia e regras de conflito permanecem no backlog.
+
+**Evidências/arquivos relacionados:**
+- `src/main/java/com/mackito/clinica/model/SolicitacaoAgendamento.java`
+- `src/main/java/com/mackito/clinica/service/SolicitacaoAgendamentoService.java`
+- `src/main/resources/db/migration/V2__criar_solicitacoes_agendamento.sql`
+- `src/test/java/com/mackito/clinica/security/SolicitacaoAgendamentoIntegrationTest.java`
+
+---
+
 ## ADR-004 — Flyway como fonte do schema MySQL
 
 **Status:** Aceita

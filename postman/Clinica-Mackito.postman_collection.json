@@ -163,7 +163,32 @@
       ]
     },
     {
-      "name": "06 - Exemplos de erro",
+      "name": "06 - Solicitações de agendamento",
+      "item": [
+        {
+          "name": "Paciente solicita agendamento",
+          "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"idMedico\": {{medicoId}},\n  \"dataPreferida\": \"{{dataAtendimento}}\",\n  \"observacao\": \"Preferência pelo período da manhã\"\n}" }, "url": "{{baseUrl}}/me/solicitacoes-agendamento" }
+        },
+        {
+          "name": "Recepção lista solicitações",
+          "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staffToken}}", "type": "string" }] },
+          "request": { "method": "GET", "url": "{{baseUrl}}/solicitacoes-agendamento" }
+        },
+        {
+          "name": "Recepção confirma solicitação",
+          "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staffToken}}", "type": "string" }] },
+          "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"sala\": \"Sala 1\"\n}" }, "url": "{{baseUrl}}/solicitacoes-agendamento/{{solicitacaoId}}/confirmar" }
+        },
+        {
+          "name": "Recepção rejeita solicitação",
+          "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{staffToken}}", "type": "string" }] },
+          "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"motivo\": \"Data indisponível; entraremos em contato com alternativas.\"\n}" }, "url": "{{baseUrl}}/solicitacoes-agendamento/{{solicitacaoId}}/rejeitar" }
+        }
+      ]
+    },
+    {
+      "name": "07 - Exemplos de erro",
       "item": [
         {
           "name": "Cadastro inválido - 400",

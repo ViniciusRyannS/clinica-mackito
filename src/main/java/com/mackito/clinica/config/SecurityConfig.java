@@ -43,6 +43,8 @@ public class SecurityConfig {
                         .requestMatchers("/me/paciente/**").hasRole("PACIENTE")
                         .requestMatchers("/me/medico/**").hasRole("MEDICO")
                         .requestMatchers("/me/atendimentos").hasAnyRole("PACIENTE", "MEDICO")
+                        .requestMatchers("/me/solicitacoes-agendamento/**").hasRole("PACIENTE")
+                        .requestMatchers("/solicitacoes-agendamento/**").hasAnyRole("ADMIN", "RECEPCAO")
                         .requestMatchers("/usuarios/**").hasRole("ADMIN")
                         .requestMatchers("/pacientes/**", "/medicos/**", "/atendimentos/**")
                             .hasAnyRole("ADMIN", "RECEPCAO")

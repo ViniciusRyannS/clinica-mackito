@@ -28,6 +28,7 @@ Prioridades: **P0** — bloqueador/risco crítico; **P1** — obrigatório para 
 | RF-016 | P3 | Código morto | `UsuarioService` e teste estão comentados; request DTOs e `SecurityUtil` sem uso; `MedicoDTO.email` nunca preenchido | arquivos/classes citados | Excluir ou integrar cada artefato após confirmar intenção, em commit isolado | Reduz ruído para leitura | Pode apagar intenção acadêmica ainda útil; preservar histórico Git | PROPOSTO |
 | RF-017 | P3 | Legibilidade | Injeção por campo, indentação inconsistente e comentários óbvios/desatualizados | controllers/services/config | Migrar gradualmente para construtor e formatar apenas arquivos tocados | Facilita testes/leitura sem refatoração massiva | Não misturar com correções funcionais | PROPOSTO |
 | RF-018 | P3 | Configuração/JPA | Dialeto MySQL explícito está obsoleto e `show-sql=true` é global | `application.properties:16-17`; warnings do startup | Deixar autodetecção e mover SQL logging para profile de desenvolvimento | Menos warnings/ruído | Validar contra versão MySQL escolhida | PROPOSTO |
+| RF-019 | P1 | Agenda | O modelo representa somente a data e ainda não detecta conflito de disponibilidade | `Atendimento.dataAtendimento`; ADR-007 | Modelar faixa de horário e impedir sobreposição após definir duração/expediente | Torna a confirmação de agenda confiável | Requer decisão humana sobre regras da clínica | PROPOSTO |
 
 ## Contagem
 

@@ -93,6 +93,16 @@ A aplicação possui quatro perfis: `ADMIN`, `RECEPCAO`, `MEDICO` e `PACIENTE`.
 - `GET /me/medico`: o médico consulta o cadastro vinculado pelo administrador;
 - `GET /me/atendimentos`: médico ou paciente consulta somente os próprios atendimentos.
 
+## Solicitação de agendamento
+
+O paciente não cria um atendimento diretamente. Ele envia uma preferência por `POST /me/solicitacoes-agendamento`, usando o próprio vínculo autenticado. A recepção consulta `GET /solicitacoes-agendamento` e decide por uma das rotas:
+
+- `PATCH /solicitacoes-agendamento/{id}/confirmar`: recebe a sala e cria o atendimento;
+- `PATCH /solicitacoes-agendamento/{id}/rejeitar`: exige uma justificativa;
+- `GET /me/solicitacoes-agendamento`: permite ao paciente acompanhar o status.
+
+Os estados são `PENDENTE`, `CONFIRMADA` e `REJEITADA`. Nesta versão, `dataPreferida` representa o dia desejado; faixas de horário e detecção de conflito serão tratadas em um ciclo posterior.
+
 O cadastro público em `POST /auth/cadastrar` sempre cria uma conta `PACIENTE`; qualquer campo `perfil` enviado pelo cliente é ignorado. A resposta contém somente `id`, `email` e `perfil`, nunca senha ou hash.
 
 Ao criar um atendimento, o usuário responsável é obtido da autenticação corrente. O cliente não envia mais `idUsuario`.

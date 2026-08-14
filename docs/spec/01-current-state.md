@@ -296,3 +296,5 @@ Na sequência, foi concluído o ownership de dados pessoais:
 - pacientes e médicos consultam somente os próprios atendimentos em `/me/atendimentos`;
 - endpoints administrativos completos permanecem restritos a `ADMIN` e `RECEPCAO`;
 - cinco testes de integração cobrem vínculo, duplicidade, separação de dados e autorização por perfil.
+
+Foi adotada a solicitação de agendamento com confirmação humana: o paciente escolhe médico e data preferida, acompanha o próprio pedido e não cria atendimento diretamente. `ADMIN`/`RECEPCAO` confirma com sala ou rejeita com motivo. A migration V2 versiona a nova tabela e quatro testes cobrem o fluxo e suas permissões.
